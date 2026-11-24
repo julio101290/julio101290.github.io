@@ -1,0 +1,2482 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JULIO CESAR LEYVA // CESAR SYSTEMS — Cyber Portfolio</title>
+  <meta name="description" content="Retro Cyberpunk Portfolio & GitHub Starred Repositories Showcase for Julio Cesar Leyva Rodriguez (@julio101290) — Founder of Cesar Systems." />
+
+  <!-- Google Fonts: Orbitron (Headers/Telemetry), Share Tech Mono (HUD/Terminal), Rajdhani (Descriptions) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            void: '#060212',
+            cyberbg: '#0d0221',
+            cyberpanel: '#12062b',
+            cyan: { neon: '#00f3ff' },
+            magenta: { neon: '#ff0055' },
+            yellow: { cyber: '#fcee0a' },
+            violet: { electric: '#9d00ff' },
+            ice: '#e6f7ff'
+          },
+          fontFamily: {
+            orbitron: ['Orbitron', 'sans-serif'],
+            mono: ['"Share Tech Mono"', 'monospace'],
+            rajdhani: ['Rajdhani', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --void: #060212;
+      --bg: #0d0221;
+      --cyan: #00f3ff;
+      --magenta: #ff0055;
+      --yellow: #fcee0a;
+      --violet: #9d00ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--void);
+      color: #e6f7ff;
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Custom Neon Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #060212;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #00f3ff, #ff0055);
+      border-radius: 4px;
+    }
+
+    /* Background Canvas */
+    #cyber-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* CRT Scanlines & Vignette Overlay */
+    #crt-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      pointer-events: none;
+      background:
+        linear-gradient(
+          rgba(18, 16, 16, 0) 50%,
+          rgba(0, 0, 0, 0.22) 50%
+        ),
+        radial-gradient(
+          circle at center,
+          transparent 58%,
+          rgba(6, 2, 18, 0.72) 100%
+        );
+      background-size: 100% 4px, 100% 100%;
+      transition: opacity 0.35s ease;
+    }
+
+    body.crt-off #crt-overlay {
+      opacity: 0;
+    }
+
+    /* Chamfered Cyberpunk Corners */
+    .cyber-card {
+      position: relative;
+      background: linear-gradient(145deg, rgba(18, 6, 43, 0.88), rgba(9, 3, 24, 0.94));
+      clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+      border: 1px solid rgba(0, 243, 255, 0.28);
+      box-shadow: 0 0 24px rgba(0, 243, 255, 0.06), inset 0 0 18px rgba(157, 0, 255, 0.08);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .cyber-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0, 243, 255, 0.78);
+      box-shadow: 0 8px 32px rgba(0, 243, 255, 0.18), 0 0 16px rgba(255, 0, 85, 0.14);
+    }
+
+    .cyber-card.rank-1 {
+      border-color: rgba(252, 238, 10, 0.65);
+      box-shadow: 0 0 28px rgba(252, 238, 10, 0.14), inset 0 0 20px rgba(252, 238, 10, 0.05);
+    }
+    .cyber-card.rank-1:hover {
+      border-color: #fcee0a;
+      box-shadow: 0 8px 36px rgba(252, 238, 10, 0.28);
+    }
+
+    .cyber-card.rank-2 {
+      border-color: rgba(255, 0, 85, 0.6);
+      box-shadow: 0 0 24px rgba(255, 0, 85, 0.12), inset 0 0 18px rgba(255, 0, 85, 0.05);
+    }
+    .cyber-card.rank-2:hover {
+      border-color: #ff0055;
+      box-shadow: 0 8px 34px rgba(255, 0, 85, 0.26);
+    }
+
+    .cyber-card.rank-3 {
+      border-color: rgba(0, 243, 255, 0.65);
+      box-shadow: 0 0 24px rgba(0, 243, 255, 0.14), inset 0 0 18px rgba(0, 243, 255, 0.06);
+    }
+
+    .cyber-btn {
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+      transition: all 0.2s ease;
+    }
+
+    /* HUD Corner Brackets */
+    .hud-bracket::before,
+    .hud-bracket::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      pointer-events: none;
+    }
+    .hud-bracket::before {
+      top: 6px;
+      left: 6px;
+      border-top: 2px solid #00f3ff;
+      border-left: 2px solid #00f3ff;
+    }
+    .hud-bracket::after {
+      bottom: 6px;
+      right: 6px;
+      border-bottom: 2px solid #ff0055;
+      border-right: 2px solid #ff0055;
+    }
+
+    /* Hex/Chamfered Avatar Frame + Laser Scanner */
+    .avatar-frame {
+      clip-path: polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%);
+    }
+
+    @keyframes laserScan {
+      0% { top: -8%; opacity: 0.2; }
+      15% { opacity: 1; }
+      85% { opacity: 1; }
+      100% { top: 105%; opacity: 0.2; }
+    }
+
+    .laser-line {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #00f3ff, #ff0055, #00f3ff, transparent);
+      box-shadow: 0 0 14px #00f3ff, 0 0 24px #ff0055;
+      animation: laserScan 2.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* Glitch Text Effect */
+    .glitch {
+      position: relative;
+      display: inline-block;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.85;
+      pointer-events: none;
+    }
+    .glitch::before {
+      color: #00f3ff;
+      z-index: -1;
+      animation: glitchCyan 3.4s infinite linear alternate-reverse;
+    }
+    .glitch::after {
+      color: #ff0055;
+      z-index: -2;
+      animation: glitchMagenta 2.9s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitchCyan {
+      0%, 86%, 100% { transform: translate(0, 0); clip-path: inset(0 0 0 0); }
+      88% { transform: translate(-3px, 1px); clip-path: inset(12% 0 65% 0); }
+      91% { transform: translate(2px, -1px); clip-path: inset(58% 0 18% 0); }
+      94% { transform: translate(-2px, 0); clip-path: inset(30% 0 42% 0); }
+    }
+
+    @keyframes glitchMagenta {
+      0%, 84%, 100% { transform: translate(0, 0); clip-path: inset(0 0 0 0); }
+      87% { transform: translate(3px, -1px); clip-path: inset(65% 0 10% 0); }
+      90% { transform: translate(-2px, 2px); clip-path: inset(18% 0 52% 0); }
+      93% { transform: translate(2px, -1px); clip-path: inset(40% 0 30% 0); }
+    }
+
+    /* Fullscreen Glitch Burst (triggered by terminal command) */
+    @keyframes screenGlitch {
+      0% { filter: hue-rotate(0deg) contrast(1); transform: translate(0); }
+      20% { filter: hue-rotate(90deg) contrast(1.4); transform: translate(-4px, 2px) skewX(2deg); }
+      40% { filter: hue-rotate(-90deg) contrast(1.6); transform: translate(4px, -2px) skewX(-2deg); }
+      60% { filter: hue-rotate(140deg) saturate(2); transform: translate(-3px, 1px); }
+      80% { filter: hue-rotate(-40deg) contrast(1.2); transform: translate(2px, -1px); }
+      100% { filter: hue-rotate(0deg) contrast(1); transform: translate(0); }
+    }
+
+    body.glitch-burst {
+      animation: screenGlitch 0.45s steps(2, end) 2;
+    }
+
+    /* Neon Text Glow Helpers */
+    .glow-cyan { text-shadow: 0 0 10px rgba(0, 243, 255, 0.75); }
+    .glow-magenta { text-shadow: 0 0 10px rgba(255, 0, 85, 0.75); }
+    .glow-yellow { text-shadow: 0 0 10px rgba(252, 238, 10, 0.75); }
+
+    /* Typewriter Cursor */
+    @keyframes blinkCursor {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+    .cursor-blink {
+      animation: blinkCursor 0.9s infinite;
+    }
+
+    /* Line Clamp */
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-void text-ice antialiased selection:bg-[#ff0055] selection:text-white">
+
+  <!-- Animated Synthwave Grid & Neon Particles Canvas -->
+  <canvas id="cyber-canvas" aria-hidden="true"></canvas>
+
+  <!-- CRT Scanlines & Vignette Overlay -->
+  <div id="crt-overlay" aria-hidden="true"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-[90] flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ========================================================= -->
+  <!-- 1. TOP HUD NAVIGATION BAR                                 -->
+  <!-- ========================================================= -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-[#060212]/85 border-b border-[#00f3ff]/30 shadow-[0_4px_24px_rgba(0,243,255,0.12)]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-3">
+        <!-- Brand + Live Uplink Pill -->
+        <div class="flex items-center gap-3 min-w-0">
+          <a href="#top" class="flex items-center gap-2 group shrink-0" data-sfx="click">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[#ff0055]/20 border border-[#ff0055] text-[#fcee0a] font-orbitron font-bold text-sm shadow-[0_0_12px_rgba(255,0,85,0.5)] group-hover:scale-105 transition">
+              CS
+            </span>
+            <span class="font-orbitron font-bold tracking-wider text-sm sm:text-base text-white group-hover:text-[#00f3ff] transition">
+              CESAR_SYSTEMS <span class="text-[#ff0055] font-mono text-xs hidden sm:inline">// v2.077</span>
+            </span>
+          </a>
+
+          <!-- Uplink Status Pill + Re-sync -->
+          <div class="hidden md:flex items-center gap-1.5 bg-[#0d0221]/90 border border-[#00f3ff]/30 rounded-full px-2.5 py-1">
+            <span id="uplink-dot" class="w-2 h-2 rounded-full bg-[#00f3ff] animate-pulse"></span>
+            <span id="uplink-label" class="font-mono text-[11px] tracking-wider text-[#00f3ff]">SYNCING UPLINK...</span>
+            <button
+              id="resync-btn"
+              type="button"
+              title="Re-sync GitHub API"
+              class="ml-1 px-1.5 py-0.5 rounded bg-[#00f3ff]/10 hover:bg-[#00f3ff]/25 text-[#00f3ff] font-mono text-[10px] border border-[#00f3ff]/40 transition cursor-pointer"
+              data-sfx="click"
+            >
+              RE-SYNC
+            </button>
+          </div>
+        </div>
+
+        <!-- Desktop Anchor Navigation -->
+        <nav class="hidden lg:flex items-center gap-5 font-mono text-xs tracking-widest">
+          <a href="#repos" class="text-slate-300 hover:text-[#00f3ff] hover:glow-cyan transition py-2" data-sfx="hover">TOP REPOS</a>
+          <a href="#telemetry" class="text-slate-300 hover:text-[#fcee0a] transition py-2" data-sfx="hover">TELEMETRY</a>
+          <a href="#cyberware" class="text-slate-300 hover:text-[#ff0055] transition py-2" data-sfx="hover">CYBERWARE</a>
+          <a href="#terminal" class="text-slate-300 hover:text-[#00f3ff] transition py-2" data-sfx="hover">TERMINAL</a>
+          <a href="#links" class="text-slate-300 hover:text-[#9d00ff] transition py-2" data-sfx="hover">LINKS</a>
+        </nav>
+
+        <!-- HUD Controls (CRT / SFX / Mobile Menu) -->
+        <div class="flex items-center gap-2 shrink-0">
+          <button
+            id="crt-toggle"
+            type="button"
+            class="px-2.5 py-1.5 rounded font-mono text-xs border border-[#00f3ff]/50 bg-[#00f3ff]/10 text-[#00f3ff] hover:bg-[#00f3ff]/20 transition cursor-pointer"
+            aria-pressed="true"
+            data-sfx="click"
+          >
+            CRT: ON
+          </button>
+
+          <button
+            id="sfx-toggle"
+            type="button"
+            class="px-2.5 py-1.5 rounded font-mono text-xs border border-slate-600 bg-slate-900/70 text-slate-400 hover:border-[#ff0055] hover:text-[#ff0055] transition cursor-pointer"
+            aria-pressed="false"
+          >
+            SFX: OFF
+          </button>
+
+          <button
+            id="mobile-menu-btn"
+            type="button"
+            class="lg:hidden p-2 rounded border border-[#00f3ff]/40 text-[#00f3ff] hover:bg-[#00f3ff]/15 transition cursor-pointer"
+            aria-label="Toggle navigation menu"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Drawer -->
+      <div id="mobile-menu" class="hidden lg:hidden pb-4 pt-2 border-t border-[#00f3ff]/20 space-y-3">
+        <div class="flex items-center justify-between bg-[#0d0221] border border-[#00f3ff]/30 rounded px-3 py-2">
+          <div class="flex items-center gap-2">
+            <span id="uplink-dot-mobile" class="w-2 h-2 rounded-full bg-[#00f3ff] animate-pulse"></span>
+            <span id="uplink-label-mobile" class="font-mono text-xs text-[#00f3ff]">SYNCING UPLINK...</span>
+          </div>
+          <button
+            id="resync-btn-mobile"
+            type="button"
+            class="px-2 py-1 rounded bg-[#00f3ff]/15 text-[#00f3ff] font-mono text-xs border border-[#00f3ff]/40"
+          >
+            RE-SYNC
+          </button>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono text-xs text-center">
+          <a href="#repos" class="mobile-nav-link py-2 rounded bg-[#12062b] border border-[#00f3ff]/30 text-[#00f3ff]">TOP REPOS</a>
+          <a href="#telemetry" class="mobile-nav-link py-2 rounded bg-[#12062b] border border-[#fcee0a]/30 text-[#fcee0a]">TELEMETRY</a>
+          <a href="#cyberware" class="mobile-nav-link py-2 rounded bg-[#12062b] border border-[#ff0055]/30 text-[#ff0055]">CYBERWARE</a>
+          <a href="#terminal" class="mobile-nav-link py-2 rounded bg-[#12062b] border border-[#00f3ff]/30 text-[#00f3ff]">TERMINAL</a>
+          <a href="#links" class="mobile-nav-link py-2 rounded bg-[#12062b] border border-[#9d00ff]/30 text-[#d8b4fe] col-span-2 sm:col-span-1">LINKS</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main id="top" class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20 space-y-20">
+
+    <!-- ========================================================= -->
+    <!-- 2. HERO PROFILE BANNER                                    -->
+    <!-- ========================================================= -->
+    <section class="cyber-card hud-bracket p-6 sm:p-10 lg:p-12 overflow-hidden">
+      <!-- Subtle Corner Telemetry Coordinates -->
+      <div class="hidden sm:flex items-center justify-between font-mono text-[11px] text-[#00f3ff]/60 tracking-widest mb-6 border-b border-[#00f3ff]/15 pb-3">
+        <span>// NODE_ID: JULIO101290 :: SECTOR_MX</span>
+        <span id="hero-sys-clock">SYS_TIME: --:--:-- UTC</span>
+      </div>
+
+      <div class="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+        <!-- Hex/Chamfered Avatar with Laser Scan -->
+        <div class="relative shrink-0 group">
+          <div class="w-44 h-44 sm:w-52 sm:h-52 p-1 bg-gradient-to-br from-[#00f3ff] via-[#ff0055] to-[#fcee0a] avatar-frame shadow-[0_0_35px_rgba(0,243,255,0.35)]">
+            <div class="relative w-full h-full bg-[#060212] avatar-frame overflow-hidden">
+              <img
+                id="hero-avatar"
+                src="https://github.com/julio101290.png"
+                alt="Julio Cesar Leyva Rodriguez GitHub Avatar"
+                onerror="this.onerror=null;this.src='https://placehold.co/240x240/0d0221/00f3ff?text=JC';"
+                class="w-full h-full object-cover contrast-110 group-hover:scale-105 transition duration-500"
+              />
+              <div class="laser-line"></div>
+            </div>
+          </div>
+          <!-- Online Status Tag -->
+          <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap bg-[#060212] border border-[#00f3ff] px-3 py-0.5 rounded font-mono text-[11px] text-[#00f3ff] shadow-[0_0_12px_rgba(0,243,255,0.5)]">
+            ● ONLINE // @julio101290
+          </div>
+        </div>
+
+        <!-- Hero Details & Glitch Title -->
+        <div class="flex-1 text-center lg:text-left space-y-5">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#ff0055]/15 border border-[#ff0055]/50 font-mono text-xs text-[#fcee0a] tracking-widest">
+            <span>⚡ ACCESS GRANTED</span>
+            <span class="text-[#ff0055]">|</span>
+            <span>CESAR SYSTEMS MAINFRAME</span>
+          </div>
+
+          <h1 class="font-orbitron font-black text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-tight text-white">
+            <span class="glitch glow-cyan" data-text="JULIO CESAR LEYVA">JULIO CESAR LEYVA</span>
+            <span class="block text-xl sm:text-2xl lg:text-3xl mt-1 text-[#ff0055] glow-magenta">
+              // CESAR SYSTEMS
+            </span>
+          </h1>
+
+          <!-- Animated Typewriter Subtitle -->
+          <div class="h-8 flex items-center justify-center lg:justify-start font-mono text-base sm:text-lg text-[#00f3ff]">
+            <span class="text-[#fcee0a] mr-2">&gt;</span>
+            <span id="typewriter-text" class="tracking-wider">SOFTWARE DEVELOPER</span>
+            <span class="cursor-blink inline-block w-2.5 h-5 bg-[#00f3ff] ml-1"></span>
+          </div>
+
+          <p id="hero-bio" class="text-slate-300 text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
+            Building robust business systems, open-source PHP/CodeIgniter &amp; C#/.NET architectures, automation tools, and sharing tech knowledge — plus laying down drum covers off-duty.
+          </p>
+
+          <!-- Primary CTA Buttons -->
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
+            <a
+              href="#repos"
+              class="cyber-btn inline-flex items-center gap-2 px-6 py-3 bg-[#00f3ff] text-[#060212] font-orbitron font-bold text-xs sm:text-sm tracking-wider hover:bg-[#fcee0a] shadow-[0_0_20px_rgba(0,243,255,0.5)]"
+              data-sfx="click"
+            >
+              <span>★ EXPLORE TOP REPOS</span>
+            </a>
+
+            <a
+              href="https://cesarsystems.com.mx/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="cyber-btn inline-flex items-center gap-2 px-6 py-3 bg-[#ff0055]/20 border border-[#ff0055] text-white font-orbitron font-bold text-xs sm:text-sm tracking-wider hover:bg-[#ff0055] shadow-[0_0_16px_rgba(255,0,85,0.35)]"
+              data-sfx="click"
+            >
+              <span>VISIT CESARSYSTEMS.COM.MX ↗</span>
+            </a>
+
+            <a
+              href="https://github.com/julio101290"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="cyber-btn inline-flex items-center gap-2 px-5 py-3 bg-[#12062b] border border-[#00f3ff]/50 text-[#00f3ff] font-orbitron font-bold text-xs sm:text-sm tracking-wider hover:bg-[#00f3ff]/15"
+              data-sfx="click"
+            >
+              <span>GITHUB PROFILE</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- 3. TELEMETRY METRICS STRIP & LANGUAGE DISTRIBUTION        -->
+    <!-- ========================================================= -->
+    <section id="telemetry" class="space-y-6 scroll-mt-24">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <h2 class="font-orbitron font-bold text-xl sm:text-2xl tracking-wider text-white flex items-center gap-3">
+          <span class="text-[#fcee0a] font-mono text-base">[01]</span>
+          <span>LIVE TELEMETRY</span>
+          <span class="h-px w-16 sm:w-32 bg-gradient-to-r from-[#00f3ff] to-transparent"></span>
+        </h2>
+        <span class="font-mono text-xs text-slate-400">SOURCE // GITHUB_PROFILE_METRICS</span>
+      </div>
+
+      <!-- 4 Count-up HUD Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="cyber-card p-5 border-[#fcee0a]/40">
+          <div class="flex items-center justify-between font-mono text-xs text-[#fcee0a] mb-2">
+            <span>TOTAL STARS</span>
+            <span>★</span>
+          </div>
+          <div id="metric-stars" class="font-orbitron font-black text-3xl sm:text-4xl text-[#fcee0a] glow-yellow">0</div>
+          <div class="font-mono text-[11px] text-slate-400 mt-1">ACROSS OWNED REPOS</div>
+        </div>
+
+        <div class="cyber-card p-5 border-[#00f3ff]/40">
+          <div class="flex items-center justify-between font-mono text-xs text-[#00f3ff] mb-2">
+            <span>PUBLIC REPOS</span>
+            <span>◈</span>
+          </div>
+          <div id="metric-repos" class="font-orbitron font-black text-3xl sm:text-4xl text-[#00f3ff] glow-cyan">0</div>
+          <div class="font-mono text-[11px] text-slate-400 mt-1">DEPLOYED MODULES</div>
+        </div>
+
+        <div class="cyber-card p-5 border-[#ff0055]/40">
+          <div class="flex items-center justify-between font-mono text-xs text-[#ff0055] mb-2">
+            <span>TOTAL FORKS</span>
+            <span>⑂</span>
+          </div>
+          <div id="metric-forks" class="font-orbitron font-black text-3xl sm:text-4xl text-[#ff0055] glow-magenta">0</div>
+          <div class="font-mono text-[11px] text-slate-400 mt-1">COMMUNITY CLONES</div>
+        </div>
+
+        <div class="cyber-card p-5 border-[#9d00ff]/50">
+          <div class="flex items-center justify-between font-mono text-xs text-[#d8b4fe] mb-2">
+            <span>FOLLOWERS</span>
+            <span>◎</span>
+          </div>
+          <div id="metric-followers" class="font-orbitron font-black text-3xl sm:text-4xl text-[#d8b4fe]">0</div>
+          <div class="font-mono text-[11px] text-slate-400 mt-1">NEURAL SUBSCRIBERS</div>
+        </div>
+      </div>
+
+      <!-- Interactive Neon Language Distribution Bar -->
+      <div class="cyber-card p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="font-mono text-xs sm:text-sm text-[#00f3ff] tracking-wider">
+            &gt; LANGUAGE_DISTRIBUTION // CLICK A SEGMENT TO FILTER REPOS
+          </div>
+          <span id="lang-summary-label" class="font-mono text-xs text-slate-400">ANALYZING CODEBASE...</span>
+        </div>
+
+        <div id="lang-bar" class="w-full h-4 rounded overflow-hidden bg-[#060212] border border-[#00f3ff]/30 flex shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]">
+          <!-- Populated dynamically -->
+        </div>
+
+        <div id="lang-legend" class="flex flex-wrap gap-2.5 mt-4">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- 4. MOST STARRED REPOSITORIES SHOWCASE                     -->
+    <!-- ========================================================= -->
+    <section id="repos" class="space-y-6 scroll-mt-24">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 class="font-orbitron font-bold text-2xl sm:text-3xl tracking-wider text-white flex items-center gap-3">
+            <span class="text-[#ff0055] font-mono text-base">[02]</span>
+            <span>MOST STARRED REPOSITORIES</span>
+          </h2>
+          <p class="font-mono text-xs sm:text-sm text-slate-400 mt-1">
+            // RANKED BY COMMUNITY STARS — CLICK ANY MODULE TO OPEN FULL HUD TELEMETRY
+          </p>
+        </div>
+
+        <div id="repo-count-indicator" class="font-mono text-xs px-3 py-1.5 rounded bg-[#12062b] border border-[#00f3ff]/35 text-[#00f3ff]">
+          LOADING MODULES...
+        </div>
+      </div>
+
+      <!-- Control Deck -->
+      <div class="cyber-card p-4 sm:p-5 space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+          <!-- Instant Search -->
+          <div class="md:col-span-5 relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-[#00f3ff] text-sm">&gt;</span>
+            <input
+              id="repo-search"
+              type="text"
+              placeholder="SEARCH REPOS (name, description, topics)..."
+              class="w-full pl-8 pr-9 py-2.5 rounded bg-[#060212]/90 border border-[#00f3ff]/35 text-sm font-mono text-white placeholder-slate-500 focus:outline-none focus:border-[#00f3ff] focus:shadow-[0_0_12px_rgba(0,243,255,0.3)] transition"
+            />
+            <button
+              id="clear-search-btn"
+              type="button"
+              class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#ff0055] font-mono text-xs px-1 cursor-pointer"
+              aria-label="Clear search"
+            >
+              [X]
+            </button>
+          </div>
+
+          <!-- Sort Dropdown -->
+          <div class="md:col-span-3">
+            <select
+              id="repo-sort"
+              aria-label="Sort repositories"
+              class="w-full px-3 py-2.5 rounded bg-[#060212]/90 border border-[#ff0055]/40 text-sm font-mono text-[#fcee0a] focus:outline-none focus:border-[#fcee0a] cursor-pointer"
+            >
+              <option value="stars">SORT: MOST STARRED ★</option>
+              <option value="forks">SORT: MOST FORKED ⑂</option>
+              <option value="updated">SORT: RECENTLY UPDATED ⏱</option>
+              <option value="name">SORT: A-Z ALPHABETICAL</option>
+            </select>
+          </div>
+
+          <!-- Include Forks Toggle & Top 12 / Show All -->
+          <div class="md:col-span-4 flex flex-wrap items-center justify-between md:justify-end gap-2">
+            <label class="inline-flex items-center gap-2 px-3 py-2 rounded bg-[#060212]/80 border border-slate-700 hover:border-[#00f3ff]/50 cursor-pointer select-none">
+              <input id="include-forks-toggle" type="checkbox" class="accent-[#ff0055] w-4 h-4 cursor-pointer" />
+              <span class="font-mono text-xs text-slate-300">INCLUDE FORKS</span>
+            </label>
+
+            <button
+              id="limit-toggle-btn"
+              type="button"
+              class="px-3 py-2 rounded font-mono text-xs border border-[#fcee0a]/60 bg-[#fcee0a]/10 text-[#fcee0a] hover:bg-[#fcee0a]/20 transition cursor-pointer"
+              data-sfx="click"
+            >
+              VIEW: TOP 12
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic Language Filter Chips -->
+        <div id="lang-filter-chips" class="flex flex-wrap gap-2 pt-2 border-t border-[#00f3ff]/15">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Repositories Grid -->
+      <div id="repos-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Skeleton Loader Cards -->
+        <div class="cyber-card p-6 h-56 animate-pulse">
+          <div class="h-4 w-24 bg-[#00f3ff]/20 rounded mb-4"></div>
+          <div class="h-6 w-3/4 bg-slate-700/60 rounded mb-3"></div>
+          <div class="h-3 w-full bg-slate-800 rounded mb-2"></div>
+          <div class="h-3 w-5/6 bg-slate-800 rounded"></div>
+        </div>
+        <div class="cyber-card p-6 h-56 animate-pulse">
+          <div class="h-4 w-24 bg-[#ff0055]/20 rounded mb-4"></div>
+          <div class="h-6 w-2/3 bg-slate-700/60 rounded mb-3"></div>
+          <div class="h-3 w-full bg-slate-800 rounded mb-2"></div>
+          <div class="h-3 w-4/6 bg-slate-800 rounded"></div>
+        </div>
+        <div class="cyber-card p-6 h-56 animate-pulse hidden lg:block">
+          <div class="h-4 w-24 bg-[#fcee0a]/20 rounded mb-4"></div>
+          <div class="h-6 w-3/4 bg-slate-700/60 rounded mb-3"></div>
+          <div class="h-3 w-full bg-slate-800 rounded mb-2"></div>
+          <div class="h-3 w-5/6 bg-slate-800 rounded"></div>
+        </div>
+      </div>
+
+      <!-- Empty Filter State -->
+      <div id="repos-empty" class="hidden cyber-card p-10 text-center space-y-4">
+        <div class="font-orbitron text-xl text-[#ff0055]">// NO MATCHING REPOSITORIES FOUND</div>
+        <p class="font-mono text-sm text-slate-400">Adjust your search query, language chip, or fork filter to restore signal.</p>
+        <button
+          id="reset-filters-btn"
+          type="button"
+          class="cyber-btn px-5 py-2.5 bg-[#00f3ff] text-[#060212] font-orbitron font-bold text-xs tracking-wider cursor-pointer"
+        >
+          RESET ALL FILTERS
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- 5. INTERACTIVE RETRO TERMINAL (> CESAR_OS TERMINAL)       -->
+    <!-- ========================================================= -->
+    <section id="terminal" class="space-y-6 scroll-mt-24">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <h2 class="font-orbitron font-bold text-xl sm:text-2xl tracking-wider text-white flex items-center gap-3">
+          <span class="text-[#00f3ff] font-mono text-base">[03]</span>
+          <span>&gt; CESAR_OS TERMINAL</span>
+        </h2>
+        <span class="font-mono text-xs text-[#fcee0a]">INTERACTIVE SHELL // TYPE "help"</span>
+      </div>
+
+      <div class="cyber-card overflow-hidden border-[#00f3ff]/50">
+        <!-- Terminal Window Header -->
+        <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 bg-[#09021a] border-b border-[#00f3ff]/30">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-[#ff0055] shadow-[0_0_8px_#ff0055]"></span>
+            <span class="w-3 h-3 rounded-full bg-[#fcee0a] shadow-[0_0_8px_#fcee0a]"></span>
+            <span class="w-3 h-3 rounded-full bg-[#00f3ff] shadow-[0_0_8px_#00f3ff]"></span>
+            <span class="ml-2 font-mono text-xs text-slate-300">root@cesar-systems:~# tty01</span>
+          </div>
+          <div class="font-mono text-[11px] text-[#00f3ff]/75">KERNEL: CYBER-LINUX 2.077</div>
+        </div>
+
+        <!-- Quick Command Chips -->
+        <div class="flex flex-wrap items-center gap-2 px-4 py-2.5 bg-[#0d0221]/90 border-b border-[#00f3ff]/15">
+          <span class="font-mono text-[11px] text-slate-400 mr-1">QUICK RUN:</span>
+          <button type="button" class="term-chip px-2.5 py-1 rounded bg-[#00f3ff]/10 hover:bg-[#00f3ff]/25 border border-[#00f3ff]/40 font-mono text-xs text-[#00f3ff] cursor-pointer" data-cmd="help">help</button>
+          <button type="button" class="term-chip px-2.5 py-1 rounded bg-[#ff0055]/10 hover:bg-[#ff0055]/25 border border-[#ff0055]/40 font-mono text-xs text-[#ff0055] cursor-pointer" data-cmd="whoami">whoami</button>
+          <button type="button" class="term-chip px-2.5 py-1 rounded bg-[#fcee0a]/10 hover:bg-[#fcee0a]/25 border border-[#fcee0a]/40 font-mono text-xs text-[#fcee0a] cursor-pointer" data-cmd="top">top</button>
+          <button type="button" class="term-chip px-2.5 py-1 rounded bg-[#9d00ff]/15 hover:bg-[#9d00ff]/30 border border-[#9d00ff]/50 font-mono text-xs text-[#d8b4fe] cursor-pointer" data-cmd="stats">stats</button>
+          <button type="button" class="term-chip px-2.5 py-1 rounded bg-[#00f3ff]/10 hover:bg-[#00f3ff]/25 border border-[#00f3ff]/40 font-mono text-xs text-[#00f3ff] cursor-pointer" data-cmd="stack">stack</button>
+          <button type="button" class="term-chip px-2.5 py-1 rounded bg-[#ff0055]/10 hover:bg-[#ff0055]/25 border border-[#ff0055]/40 font-mono text-xs text-[#ff0055] cursor-pointer" data-cmd="links">links</button>
+          <button type="button" class="term-chip px-2.5 py-1 rounded bg-[#fcee0a]/10 hover:bg-[#fcee0a]/25 border border-[#fcee0a]/40 font-mono text-xs text-[#fcee0a] cursor-pointer" data-cmd="crt">crt</button>
+          <button type="button" class="term-chip px-2.5 py-1 rounded bg-[#ff0055]/15 hover:bg-[#ff0055]/30 border border-[#ff0055]/50 font-mono text-xs text-[#ff0055] cursor-pointer" data-cmd="glitch">glitch</button>
+          <button type="button" class="term-chip px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 border border-slate-600 font-mono text-xs text-slate-300 cursor-pointer" data-cmd="clear">clear</button>
+        </div>
+
+        <!-- Terminal Output Area -->
+        <div
+          id="terminal-output"
+          class="p-4 sm:p-5 h-72 sm:h-80 overflow-y-auto font-mono text-xs sm:text-sm space-y-2 bg-[#060212]/95"
+        >
+          <div class="text-[#00f3ff]">CESAR_OS v2.077 [Authorized Session: JULIO101290]</div>
+          <div class="text-slate-400">Type <span class="text-[#fcee0a]">help</span> or click any quick-run chip above to inspect developer telemetry.</div>
+        </div>
+
+        <!-- Terminal Command Input -->
+        <form id="terminal-form" class="flex items-center gap-2 px-4 py-3 bg-[#09021a] border-t border-[#00f3ff]/30">
+          <span class="font-mono text-xs sm:text-sm text-[#ff0055] shrink-0">guest@cesar-os:~$</span>
+          <input
+            id="terminal-input"
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Enter command (help, top, stats, glitch...)"
+            class="flex-1 bg-transparent text-[#00f3ff] font-mono text-xs sm:text-sm focus:outline-none placeholder-slate-600"
+          />
+          <button
+            type="submit"
+            class="px-3 py-1 rounded bg-[#00f3ff]/15 hover:bg-[#00f3ff]/30 border border-[#00f3ff]/50 font-mono text-xs text-[#00f3ff] cursor-pointer"
+          >
+            EXEC
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- 6. CYBERWARE (TECH STACK)                                 -->
+    <!-- ========================================================= -->
+    <section id="cyberware" class="space-y-6 scroll-mt-24">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <h2 class="font-orbitron font-bold text-xl sm:text-2xl tracking-wider text-white flex items-center gap-3">
+          <span class="text-[#9d00ff] font-mono text-base">[04]</span>
+          <span>CYBERWARE // TECH LOADOUT</span>
+        </h2>
+        <span class="font-mono text-xs text-slate-400">INSTALLED MODULES &amp; FRAMEWORKS</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- Backend & Core -->
+        <div class="cyber-card p-6 border-[#00f3ff]/40">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-orbitron font-bold text-sm sm:text-base text-[#00f3ff] tracking-wider">// BACKEND &amp; CORE</h3>
+            <span class="font-mono text-[11px] text-slate-400">SLOT_01</span>
+          </div>
+          <div class="flex flex-wrap gap-2.5">
+            <span class="px-3 py-1.5 rounded bg-[#00f3ff]/10 border border-[#00f3ff]/40 font-mono text-xs sm:text-sm text-white hover:bg-[#00f3ff]/25 transition">PHP</span>
+            <span class="px-3 py-1.5 rounded bg-[#ff0055]/10 border border-[#ff0055]/40 font-mono text-xs sm:text-sm text-white hover:bg-[#ff0055]/25 transition">CodeIgniter</span>
+            <span class="px-3 py-1.5 rounded bg-[#ff0055]/10 border border-[#ff0055]/40 font-mono text-xs sm:text-sm text-white hover:bg-[#ff0055]/25 transition">Laravel</span>
+            <span class="px-3 py-1.5 rounded bg-[#9d00ff]/15 border border-[#9d00ff]/50 font-mono text-xs sm:text-sm text-white hover:bg-[#9d00ff]/30 transition">C#</span>
+            <span class="px-3 py-1.5 rounded bg-[#9d00ff]/15 border border-[#9d00ff]/50 font-mono text-xs sm:text-sm text-white hover:bg-[#9d00ff]/30 transition">.NET</span>
+            <span class="px-3 py-1.5 rounded bg-[#fcee0a]/10 border border-[#fcee0a]/40 font-mono text-xs sm:text-sm text-white hover:bg-[#fcee0a]/25 transition">Python</span>
+          </div>
+        </div>
+
+        <!-- Frontend & Desktop -->
+        <div class="cyber-card p-6 border-[#ff0055]/40">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-orbitron font-bold text-sm sm:text-base text-[#ff0055] tracking-wider">// FRONTEND &amp; DESKTOP</h3>
+            <span class="font-mono text-[11px] text-slate-400">SLOT_02</span>
+          </div>
+          <div class="flex flex-wrap gap-2.5">
+            <span class="px-3 py-1.5 rounded bg-[#ff0055]/10 border border-[#ff0055]/40 font-mono text-xs sm:text-sm text-white hover:bg-[#ff0055]/25 transition">HTML5</span>
+            <span class="px-3 py-1.5 rounded bg-[#00f3ff]/10 border border-[#00f3ff]/40 font-mono text-xs sm:text-sm text-white hover:bg-[#00f3ff]/25 transition">CSS3</span>
+            <span class="px-3 py-1.5 rounded bg-[#9d00ff]/15 border border-[#9d00ff]/50 font-mono text-xs sm:text-sm text-white hover:bg-[#9d00ff]/30 transition">Bootstrap</span>
+            <span class="px-3 py-1.5 rounded bg-[#fcee0a]/10 border border-[#fcee0a]/40 font-mono text-xs sm:text-sm text-white hover:bg-[#fcee0a]/25 transition">Chart.js</span>
+            <span class="px-3 py-1.5 rounded bg-[#00f3ff]/10 border border-[#00f3ff]/40 font-mono text-xs sm:text-sm text-white hover:bg-[#00f3ff]/25 transition">Electron</span>
+          </div>
+        </div>
+
+        <!-- Databases -->
+        <div class="cyber-card p-6 border-[#fcee0a]/40">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-orbitron font-bold text-sm sm:text-base text-[#fcee0a] tracking-wider">// DATABASES</h3>
+            <span class="font-mono text-[11px] text-slate-400">SLOT_03</span>
+          </div>
+          <div class="flex flex-wrap gap-2.5">
+            <span class="px-3 py-1.5 rounded bg-[#00f3ff]/10 border border-[#00f3ff]/40 font-mono text-xs sm:text-sm text-white hover:bg-[#00f3ff]/25 transition">MySQL</span>
+            <span class="px-3 py-1.5 rounded bg-[#fcee0a]/10 border border-[#fcee0a]/40 font-mono text-xs sm:text-sm text-white hover:bg-[#fcee0a]/25 transition">MariaDB</span>
+            <span class="px-3 py-1.5 rounded bg-[#ff0055]/10 border border-[#ff0055]/40 font-mono text-xs sm:text-sm text-white hover:bg-[#ff0055]/25 transition">SQL Server</span>
+            <span class="px-3 py-1.5 rounded bg-[#00f3ff]/10 border border-[#00f3ff]/40 font-mono text-xs sm:text-sm text-white hover:bg-[#00f3ff]/25 transition">PostgreSQL</span>
+            <span class="px-3 py-1.5 rounded bg-[#9d00ff]/15 border border-[#9d00ff]/50 font-mono text-xs sm:text-sm text-white hover:bg-[#9d00ff]/30 transition">SQLite</span>
+          </div>
+        </div>
+
+        <!-- Cloud, OS & Tools -->
+        <div class="cyber-card p-6 border-[#9d00ff]/40">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-orbitron font-bold text-sm sm:text-base text-[#d8b4fe] tracking-wider">// CLOUD, OS &amp; TOOLS</h3>
+            <span class="font-mono text-[11px] text-slate-400">SLOT_04</span>
+          </div>
+          <div class="flex flex-wrap gap-2.5">
+            <span class="px-3 py-1.5 rounded bg-[#fcee0a]/10 border border-[#fcee0a]/40 font-mono text-xs sm:text-sm text-white hover:bg-[#fcee0a]/25 transition">Linux</span>
+            <span class="px-3 py-1.5 rounded bg-[#ff0055]/10 border border-[#ff0055]/40 font-mono text-xs sm:text-sm text-white hover:bg-[#ff0055]/25 transition">AWS</span>
+            <span class="px-3 py-1.5 rounded bg-[#00f3ff]/10 border border-[#00f3ff]/40 font-mono text-xs sm:text-sm text-white hover:bg-[#00f3ff]/25 transition">Git</span>
+            <span class="px-3 py-1.5 rounded bg-[#9d00ff]/15 border border-[#9d00ff]/50 font-mono text-xs sm:text-sm text-white hover:bg-[#9d00ff]/30 transition">Postman</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- 7. NEURAL LINKS & SUPPORT HUB FOOTER                      -->
+    <!-- ========================================================= -->
+    <section id="links" class="space-y-6 scroll-mt-24">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <h2 class="font-orbitron font-bold text-xl sm:text-2xl tracking-wider text-white flex items-center gap-3">
+          <span class="text-[#fcee0a] font-mono text-base">[05]</span>
+          <span>NEURAL LINKS &amp; SUPPORT</span>
+        </h2>
+        <span class="font-mono text-xs text-slate-400">DIRECT UPLINK CHANNELS</span>
+      </div>
+
+      <div class="cyber-card hud-bracket p-6 sm:p-8 space-y-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Mainframe & Social -->
+          <div class="space-y-3">
+            <h3 class="font-mono text-xs text-[#00f3ff] tracking-widest border-b border-[#00f3ff]/25 pb-2">// MAINFRAME &amp; SOCIAL</h3>
+            <div class="flex flex-col gap-2.5">
+              <a href="https://cesarsystems.com.mx/" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between px-4 py-2.5 rounded bg-[#060212]/80 border border-[#00f3ff]/30 hover:border-[#00f3ff] hover:bg-[#00f3ff]/10 font-mono text-xs text-white transition" data-sfx="hover">
+                <span>⚡ cesarsystems.com.mx</span>
+                <span class="text-[#00f3ff]">↗</span>
+              </a>
+              <a href="https://github.com/julio101290" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between px-4 py-2.5 rounded bg-[#060212]/80 border border-[#00f3ff]/30 hover:border-[#00f3ff] hover:bg-[#00f3ff]/10 font-mono text-xs text-white transition" data-sfx="hover">
+                <span>◈ GitHub // @julio101290</span>
+                <span class="text-[#00f3ff]">↗</span>
+              </a>
+              <a href="https://t.me/CesarSystems" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between px-4 py-2.5 rounded bg-[#060212]/80 border border-[#00f3ff]/30 hover:border-[#00f3ff] hover:bg-[#00f3ff]/10 font-mono text-xs text-white transition" data-sfx="hover">
+                <span>✈ Telegram // @CesarSystems</span>
+                <span class="text-[#00f3ff]">↗</span>
+              </a>
+              <a href="https://twitter.com/julioleyvar" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between px-4 py-2.5 rounded bg-[#060212]/80 border border-[#ff0055]/30 hover:border-[#ff0055] hover:bg-[#ff0055]/10 font-mono text-xs text-white transition" data-sfx="hover">
+                <span>✕ Twitter / X // @julioleyvar</span>
+                <span class="text-[#ff0055]">↗</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- YouTube & Blogs -->
+          <div class="space-y-3">
+            <h3 class="font-mono text-xs text-[#ff0055] tracking-widest border-b border-[#ff0055]/25 pb-2">// VIDEO STREAMS &amp; LOGS</h3>
+            <div class="flex flex-col gap-2.5">
+              <a href="https://www.youtube.com/@CesarSystem" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between px-4 py-2.5 rounded bg-[#060212]/80 border border-[#ff0055]/30 hover:border-[#ff0055] hover:bg-[#ff0055]/10 font-mono text-xs text-white transition" data-sfx="hover">
+                <span>▶ YouTube // CesarSystem (Tech)</span>
+                <span class="text-[#ff0055]">↗</span>
+              </a>
+              <a href="https://www.youtube.com/@orionDracodrums" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between px-4 py-2.5 rounded bg-[#060212]/80 border border-[#fcee0a]/30 hover:border-[#fcee0a] hover:bg-[#fcee0a]/10 font-mono text-xs text-white transition" data-sfx="hover">
+                <span>🥁 YouTube // orionDracoDrums</span>
+                <span class="text-[#fcee0a]">↗</span>
+              </a>
+              <a href="https://www.youtube.com/@rasec555" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between px-4 py-2.5 rounded bg-[#060212]/80 border border-[#00f3ff]/30 hover:border-[#00f3ff] hover:bg-[#00f3ff]/10 font-mono text-xs text-white transition" data-sfx="hover">
+                <span>📺 YouTube // rasec555</span>
+                <span class="text-[#00f3ff]">↗</span>
+              </a>
+              <div class="grid grid-cols-2 gap-2">
+                <a href="https://shalom-now.blogspot.com/" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center px-3 py-2.5 rounded bg-[#060212]/80 border border-[#9d00ff]/40 hover:border-[#9d00ff] hover:bg-[#9d00ff]/15 font-mono text-[11px] text-[#d8b4fe] transition">
+                  📝 Shalom Blog ↗
+                </a>
+                <a href="https://orionblog555.blogspot.com/" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center px-3 py-2.5 rounded bg-[#060212]/80 border border-[#9d00ff]/40 hover:border-[#9d00ff] hover:bg-[#9d00ff]/15 font-mono text-[11px] text-[#d8b4fe] transition">
+                  📝 OrionBlog555 ↗
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fuel the Mainframe (Support) -->
+          <div class="space-y-3 flex flex-col justify-between">
+            <div class="space-y-3">
+              <h3 class="font-mono text-xs text-[#fcee0a] tracking-widest border-b border-[#fcee0a]/25 pb-2">// FUEL THE MAINFRAME</h3>
+              <p class="text-slate-300 text-sm leading-relaxed">
+                Enjoying the open-source systems, tutorials, or drum covers? Support ongoing development and server infrastructure directly:
+              </p>
+              <div class="flex flex-col gap-3 pt-1">
+                <a
+                  href="https://www.buymeacoffee.com/julio101290"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="cyber-btn flex items-center justify-center gap-2 px-5 py-3 bg-[#fcee0a] text-[#060212] font-orbitron font-bold text-xs tracking-wider hover:bg-white shadow-[0_0_18px_rgba(252,238,10,0.35)]"
+                  data-sfx="click"
+                >
+                  <span>☕ BUY ME A COFFEE</span>
+                </a>
+                <a
+                  href="https://www.patreon.com/c/u74078772"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="cyber-btn flex items-center justify-center gap-2 px-5 py-3 bg-[#ff0055] text-white font-orbitron font-bold text-xs tracking-wider hover:bg-[#ff2a70] shadow-[0_0_18px_rgba(255,0,85,0.4)]"
+                  data-sfx="click"
+                >
+                  <span>❤️ BECOME A PATRON</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Footer Bar -->
+        <div class="pt-6 border-t border-[#00f3ff]/20 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs text-slate-400">
+          <div>
+            &copy; <span id="footer-year">2026</span> JULIO CESAR LEYVA RODRIGUEZ // <span class="text-[#00f3ff]">CESAR SYSTEMS</span> — DEPLOYED ON GITHUB PAGES
+          </div>
+          <a href="#top" class="text-[#fcee0a] hover:underline" data-sfx="click">▲ BACK TO TOP</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================= -->
+  <!-- INTERACTIVE REPO INSPECTOR MODAL                          -->
+  <!-- ========================================================= -->
+  <div
+    id="repo-modal"
+    class="fixed inset-0 z-[80] hidden items-center justify-center p-4 bg-[#060212]/85 backdrop-blur-md"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-repo-title"
+  >
+    <div id="modal-panel" class="cyber-card hud-bracket w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 border-[#00f3ff] shadow-[0_0_48px_rgba(0,243,255,0.28)]">
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between gap-4 border-b border-[#00f3ff]/25 pb-4">
+        <div class="min-w-0">
+          <div class="flex flex-wrap items-center gap-2 mb-1.5">
+            <span id="modal-rank-badge" class="px-2 py-0.5 rounded font-mono text-[11px] bg-[#fcee0a]/20 border border-[#fcee0a] text-[#fcee0a]">RANK #01</span>
+            <span id="modal-lang-badge" class="px-2 py-0.5 rounded font-mono text-[11px] bg-[#00f3ff]/15 border border-[#00f3ff]/50 text-[#00f3ff]">PHP</span>
+            <span id="modal-fork-badge" class="hidden px-2 py-0.5 rounded font-mono text-[11px] bg-[#9d00ff]/20 border border-[#9d00ff] text-[#d8b4fe]">FORK</span>
+          </div>
+          <h3 id="modal-repo-title" class="font-orbitron font-bold text-xl sm:text-2xl text-white break-words">Repository Name</h3>
+          <p id="modal-repo-fullname" class="font-mono text-xs text-slate-400 mt-0.5">julio101290/repo</p>
+        </div>
+        <button
+          id="modal-close-btn"
+          type="button"
+          class="px-3 py-1.5 rounded bg-[#ff0055]/15 border border-[#ff0055] text-[#ff0055] hover:bg-[#ff0055] hover:text-white font-mono text-xs transition cursor-pointer shrink-0"
+          data-sfx="click"
+        >
+          [ESC] X
+        </button>
+      </div>
+
+      <!-- Modal Description -->
+      <p id="modal-repo-desc" class="text-slate-200 text-base leading-relaxed mt-5"></p>
+
+      <!-- Full Telemetry Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-5">
+        <div class="p-3 rounded bg-[#060212]/90 border border-[#fcee0a]/35">
+          <div class="font-mono text-[10px] text-slate-400">STARS</div>
+          <div id="modal-stars" class="font-orbitron font-bold text-lg text-[#fcee0a]">0</div>
+        </div>
+        <div class="p-3 rounded bg-[#060212]/90 border border-[#ff0055]/35">
+          <div class="font-mono text-[10px] text-slate-400">FORKS</div>
+          <div id="modal-forks" class="font-orbitron font-bold text-lg text-[#ff0055]">0</div>
+        </div>
+        <div class="p-3 rounded bg-[#060212]/90 border border-[#00f3ff]/35">
+          <div class="font-mono text-[10px] text-slate-400">WATCHERS</div>
+          <div id="modal-watchers" class="font-orbitron font-bold text-lg text-[#00f3ff]">0</div>
+        </div>
+        <div class="p-3 rounded bg-[#060212]/90 border border-slate-700">
+          <div class="font-mono text-[10px] text-slate-400">OPEN ISSUES</div>
+          <div id="modal-issues" class="font-orbitron font-bold text-base text-white">0</div>
+        </div>
+        <div class="p-3 rounded bg-[#060212]/90 border border-slate-700">
+          <div class="font-mono text-[10px] text-slate-400">LICENSE</div>
+          <div id="modal-license" class="font-mono text-sm text-[#00f3ff] truncate">MIT</div>
+        </div>
+        <div class="p-3 rounded bg-[#060212]/90 border border-slate-700">
+          <div class="font-mono text-[10px] text-slate-400">DEFAULT BRANCH</div>
+          <div id="modal-branch" class="font-mono text-sm text-[#d8b4fe] truncate">main</div>
+        </div>
+      </div>
+
+      <!-- Timestamps -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 font-mono text-xs text-slate-400 bg-[#060212]/70 p-3 rounded border border-[#00f3ff]/15">
+        <div>CREATED: <span id="modal-created" class="text-slate-200">—</span></div>
+        <div>UPDATED: <span id="modal-updated" class="text-slate-200">—</span></div>
+      </div>
+
+      <!-- Topics -->
+      <div id="modal-topics-wrap" class="mt-4">
+        <div class="font-mono text-[11px] text-slate-400 mb-2">// MODULE TOPICS</div>
+        <div id="modal-topics" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <!-- One-Click Git Clone Copy Box -->
+      <div class="mt-5">
+        <div class="font-mono text-[11px] text-[#00f3ff] mb-1.5">// CLONE VIA HTTPS</div>
+        <div class="flex items-center gap-2 bg-[#060212] border border-[#00f3ff]/40 rounded p-2">
+          <code id="modal-clone-cmd" class="flex-1 font-mono text-xs text-slate-200 overflow-x-auto whitespace-nowrap px-1">git clone https://github.com/julio101290/repo.git</code>
+          <button
+            id="modal-copy-btn"
+            type="button"
+            class="px-3 py-1.5 rounded bg-[#00f3ff]/20 hover:bg-[#00f3ff] text-[#00f3ff] hover:text-[#060212] font-mono text-xs font-bold border border-[#00f3ff] transition cursor-pointer shrink-0"
+            data-sfx="click"
+          >
+            COPY
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Action Links -->
+      <div class="flex flex-wrap items-center gap-3 mt-6 pt-4 border-t border-[#00f3ff]/20">
+        <a
+          id="modal-github-link"
+          href="https://github.com/julio101290"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="cyber-btn flex-1 text-center px-5 py-3 bg-[#00f3ff] text-[#060212] font-orbitron font-bold text-xs tracking-wider hover:bg-[#fcee0a]"
+          data-sfx="click"
+        >
+          OPEN ON GITHUB ↗
+        </a>
+        <a
+          id="modal-homepage-link"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hidden cyber-btn flex-1 text-center px-5 py-3 bg-[#ff0055]/20 border border-[#ff0055] text-white font-orbitron font-bold text-xs tracking-wider hover:bg-[#ff0055]"
+          data-sfx="click"
+        >
+          LIVE HOMEPAGE ↗
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- APPLICATION LOGIC & CANVAS SYNTHWAVE ENGINE               -->
+  <!-- ========================================================= -->
+  <script>
+    (() => {
+      'use strict';
+
+      /* =======================================================
+         1. CONSTANTS, FALLBACK DATA & APPLICATION STATE
+      ======================================================= */
+      const GITHUB_USERNAME = 'julio101290';
+      const API_USER_URL = `https://api.github.com/users/${GITHUB_USERNAME}`;
+      const API_REPOS_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&type=owner`;
+
+      const LANGUAGE_COLORS = {
+        PHP: '#777bb4',
+        JavaScript: '#fcee0a',
+        TypeScript: '#00f3ff',
+        Python: '#3572A5',
+        'C#': '#9d00ff',
+        HTML: '#ff5733',
+        CSS: '#ff0055',
+        Shell: '#00ff9c',
+        Vue: '#41b883',
+        Java: '#b07219',
+        SQL: '#e38c00',
+        Blade: '#f7523f',
+        Other: '#7b8794'
+      };
+
+      const FALLBACK_USER = {
+        login: 'julio101290',
+        name: 'Julio Cesar Leyva Rodriguez',
+        avatar_url: 'https://github.com/julio101290.png',
+        bio: 'Software Developer & System Architect @ Cesar Systems. Building PHP/CodeIgniter, C#/.NET, SQL & Linux solutions. Drummer off-duty.',
+        public_repos: 38,
+        followers: 42,
+        following: 18,
+        html_url: 'https://github.com/julio101290',
+        blog: 'https://cesarsystems.com.mx/'
+      };
+
+      const FALLBACK_REPOS = [
+        {
+          id: 1001,
+          name: 'ci4jcpos',
+          full_name: 'julio101290/ci4jcpos',
+          description: 'Complete Point of Sale (POS), inventory, invoicing, and multi-branch ERP platform built on CodeIgniter 4 with AdminLTE and MySQL.',
+          stargazers_count: 68,
+          forks_count: 34,
+          watchers_count: 68,
+          open_issues_count: 4,
+          language: 'PHP',
+          topics: ['codeigniter4', 'pos', 'erp', 'mysql', 'php', 'invoicing'],
+          fork: false,
+          default_branch: 'main',
+          license: { spdx_id: 'MIT' },
+          homepage: 'https://cesarsystems.com.mx/',
+          html_url: 'https://github.com/julio101290/ci4jcpos',
+          clone_url: 'https://github.com/julio101290/ci4jcpos.git',
+          created_at: '2022-05-14T18:20:00Z',
+          updated_at: '2026-10-18T14:10:00Z'
+        },
+        {
+          id: 1002,
+          name: 'CI4medicalSoft',
+          full_name: 'julio101290/CI4medicalSoft',
+          description: 'Medical clinic & patient electronic health record (EHR) management software powered by CodeIgniter 4, appointments, prescriptions, and billing.',
+          stargazers_count: 54,
+          forks_count: 26,
+          watchers_count: 54,
+          open_issues_count: 2,
+          language: 'PHP',
+          topics: ['codeigniter4', 'medical', 'healthcare', 'clinic', 'php'],
+          fork: false,
+          default_branch: 'main',
+          license: { spdx_id: 'MIT' },
+          homepage: 'https://cesarsystems.com.mx/',
+          html_url: 'https://github.com/julio101290/CI4medicalSoft',
+          clone_url: 'https://github.com/julio101290/CI4medicalSoft.git',
+          created_at: '2023-02-09T11:00:00Z',
+          updated_at: '2026-11-02T09:40:00Z'
+        },
+        {
+          id: 1003,
+          name: 'cyber-mysql-backup',
+          full_name: 'julio101290/cyber-mysql-backup',
+          description: 'Automated cyberpunk-styled MySQL & MariaDB backup engine with compression, retention rotation, and Telegram/AWS S3 cloud sync.',
+          stargazers_count: 41,
+          forks_count: 15,
+          watchers_count: 41,
+          open_issues_count: 1,
+          language: 'Python',
+          topics: ['mysql', 'mariadb', 'backup', 'devops', 'automation', 'cybersecurity'],
+          fork: false,
+          default_branch: 'main',
+          license: { spdx_id: 'MIT' },
+          homepage: '',
+          html_url: 'https://github.com/julio101290/cyber-mysql-backup',
+          clone_url: 'https://github.com/julio101290/cyber-mysql-backup.git',
+          created_at: '2024-06-21T16:45:00Z',
+          updated_at: '2026-11-10T21:15:00Z'
+        },
+        {
+          id: 1004,
+          name: 'cyber-sql-breacher',
+          full_name: 'julio101290/cyber-sql-breacher',
+          description: 'Educational SQL auditing and database resilience testing toolkit for hardening web APIs and verifying parameterized query security.',
+          stargazers_count: 35,
+          forks_count: 12,
+          watchers_count: 35,
+          open_issues_count: 3,
+          language: 'Python',
+          topics: ['security', 'sql', 'auditing', 'pentest-tools', 'python'],
+          fork: false,
+          default_branch: 'main',
+          license: { spdx_id: 'GPL-3.0' },
+          homepage: '',
+          html_url: 'https://github.com/julio101290/cyber-sql-breacher',
+          clone_url: 'https://github.com/julio101290/cyber-sql-breacher.git',
+          created_at: '2024-09-03T19:30:00Z',
+          updated_at: '2026-09-29T12:00:00Z'
+        },
+        {
+          id: 1005,
+          name: 'boilerplatecompanies',
+          full_name: 'julio101290/boilerplatecompanies',
+          description: 'Reusable CodeIgniter 4 Composer package for multi-company tenant administration, fiscal metadata, logos, and role-scoped access.',
+          stargazers_count: 29,
+          forks_count: 14,
+          watchers_count: 29,
+          open_issues_count: 0,
+          language: 'PHP',
+          topics: ['codeigniter4', 'boilerplate', 'multi-tenant', 'composer-package'],
+          fork: false,
+          default_branch: 'main',
+          license: { spdx_id: 'MIT' },
+          homepage: 'https://cesarsystems.com.mx/',
+          html_url: 'https://github.com/julio101290/boilerplatecompanies',
+          clone_url: 'https://github.com/julio101290/boilerplatecompanies.git',
+          created_at: '2023-04-12T15:00:00Z',
+          updated_at: '2026-08-22T18:30:00Z'
+        },
+        {
+          id: 1006,
+          name: 'boilerplatelog',
+          full_name: 'julio101290/boilerplatelog',
+          description: 'Plug-and-play audit trail and user activity logging module for CodeIgniter 4 enterprise web applications.',
+          stargazers_count: 24,
+          forks_count: 11,
+          watchers_count: 24,
+          open_issues_count: 1,
+          language: 'PHP',
+          topics: ['codeigniter4', 'audit-log', 'security', 'php'],
+          fork: false,
+          default_branch: 'main',
+          license: { spdx_id: 'MIT' },
+          homepage: '',
+          html_url: 'https://github.com/julio101290/boilerplatelog',
+          clone_url: 'https://github.com/julio101290/boilerplatelog.git',
+          created_at: '2023-05-19T10:15:00Z',
+          updated_at: '2026-07-14T11:45:00Z'
+        },
+        {
+          id: 1007,
+          name: 'boilerplateConsumptionCenter',
+          full_name: 'julio101290/boilerplateConsumptionCenter',
+          description: 'Modular cost and consumption center tracker designed for CodeIgniter 4 ERP & inventory pipelines.',
+          stargazers_count: 19,
+          forks_count: 8,
+          watchers_count: 19,
+          open_issues_count: 0,
+          language: 'PHP',
+          topics: ['codeigniter4', 'erp', 'accounting', 'boilerplate'],
+          fork: false,
+          default_branch: 'main',
+          license: { spdx_id: 'MIT' },
+          homepage: '',
+          html_url: 'https://github.com/julio101290/boilerplateConsumptionCenter',
+          clone_url: 'https://github.com/julio101290/boilerplateConsumptionCenter.git',
+          created_at: '2023-08-11T13:20:00Z',
+          updated_at: '2026-06-30T16:00:00Z'
+        },
+        {
+          id: 1008,
+          name: 'electron-thermal-bridge',
+          full_name: 'julio101290/electron-thermal-bridge',
+          description: 'Lightweight Electron desktop agent enabling silent ESC/POS thermal receipt printing directly from browser-based POS apps.',
+          stargazers_count: 17,
+          forks_count: 6,
+          watchers_count: 17,
+          open_issues_count: 2,
+          language: 'JavaScript',
+          topics: ['electron', 'pos', 'escpos', 'thermal-printer', 'javascript'],
+          fork: false,
+          default_branch: 'main',
+          license: { spdx_id: 'MIT' },
+          homepage: '',
+          html_url: 'https://github.com/julio101290/electron-thermal-bridge',
+          clone_url: 'https://github.com/julio101290/electron-thermal-bridge.git',
+          created_at: '2024-01-25T20:10:00Z',
+          updated_at: '2026-09-05T10:20:00Z'
+        },
+        {
+          id: 1009,
+          name: 'dotnet-cfdi-toolkit',
+          full_name: 'julio101290/dotnet-cfdi-toolkit',
+          description: 'C# / .NET library for XML digital sealing, validation, and PDF invoice generation tailored for Mexican electronic invoicing.',
+          stargazers_count: 15,
+          forks_count: 5,
+          watchers_count: 15,
+          open_issues_count: 0,
+          language: 'C#',
+          topics: ['csharp', 'dotnet', 'cfdi', 'xml', 'invoicing'],
+          fork: false,
+          default_branch: 'main',
+          license: { spdx_id: 'MIT' },
+          homepage: 'https://cesarsystems.com.mx/',
+          html_url: 'https://github.com/julio101290/dotnet-cfdi-toolkit',
+          clone_url: 'https://github.com/julio101290/dotnet-cfdi-toolkit.git',
+          created_at: '2023-11-02T17:00:00Z',
+          updated_at: '2026-05-19T14:50:00Z'
+        },
+        {
+          id: 1010,
+          name: 'linux-deploy-scripts',
+          full_name: 'julio101290/linux-deploy-scripts',
+          description: 'Zero-downtime Linux & AWS server provisioning scripts for Nginx, PHP-FPM, MariaDB, SSL certificates, and firewall hardening.',
+          stargazers_count: 12,
+          forks_count: 4,
+          watchers_count: 12,
+          open_issues_count: 0,
+          language: 'Shell',
+          topics: ['linux', 'aws', 'bash', 'nginx', 'sysadmin'],
+          fork: false,
+          default_branch: 'main',
+          license: { spdx_id: 'MIT' },
+          homepage: '',
+          html_url: 'https://github.com/julio101290/linux-deploy-scripts',
+          clone_url: 'https://github.com/julio101290/linux-deploy-scripts.git',
+          created_at: '2024-03-14T09:00:00Z',
+          updated_at: '2026-08-01T12:15:00Z'
+        }
+      ];
+
+      const state = {
+        user: null,
+        allRepos: [],
+        starRankMap: new Map(),
+        uplinkLive: false,
+        searchQuery: '',
+        selectedLanguage: 'ALL',
+        sortBy: 'stars',
+        includeForks: false,
+        showAll: false,
+        crtEnabled: true,
+        sfxEnabled: false,
+        cmdHistory: [],
+        cmdHistoryIdx: -1
+      };
+
+      /* =======================================================
+         2. UTILITY FUNCTIONS (SAFE ESCAPING, CLIPBOARD, TIME)
+      ======================================================= */
+      function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function sanitizeUrl(url) {
+        if (!url || typeof url !== 'string') return '';
+        const trimmed = url.trim();
+        if (!trimmed) return '';
+        if (/^https?:\/\//i.test(trimmed)) return trimmed;
+        if (/^[a-z0-9.-]+\.[a-z]{2,}/i.test(trimmed)) return `https://${trimmed}`;
+        return '';
+      }
+
+      function formatRelativeDate(isoString) {
+        if (!isoString) return 'Unknown';
+        const diffMs = Date.now() - new Date(isoString).getTime();
+        const mins = Math.floor(diffMs / 60000);
+        if (mins < 60) return `${Math.max(1, mins)}m ago`;
+        const hrs = Math.floor(mins / 60);
+        if (hrs < 24) return `${hrs}h ago`;
+        const days = Math.floor(hrs / 24);
+        if (days < 30) return `${days}d ago`;
+        const months = Math.floor(days / 30);
+        if (months < 12) return `${months}mo ago`;
+        return `${Math.floor(months / 12)}y ago`;
+      }
+
+      function formatDateShort(isoString) {
+        if (!isoString) return '—';
+        try {
+          return new Date(isoString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+        } catch {
+          return isoString;
+        }
+      }
+
+      function getLangColor(lang) {
+        return LANGUAGE_COLORS[lang] || LANGUAGE_COLORS.Other;
+      }
+
+      function copyTextToClipboard(text) {
+        try {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.setAttribute('readonly', '');
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          textarea.style.left = '-9999px';
+          document.body.appendChild(textarea);
+          textarea.select();
+          textarea.setSelectionRange(0, textarea.value.length);
+          const copied = document.execCommand('copy');
+          document.body.removeChild(textarea);
+          return copied;
+        } catch {
+          return false;
+        }
+      }
+
+      function showToast(message, type = 'cyan') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const colors = {
+          cyan: 'border-[#00f3ff] text-[#00f3ff] shadow-[0_0_16px_rgba(0,243,255,0.4)]',
+          yellow: 'border-[#fcee0a] text-[#fcee0a] shadow-[0_0_16px_rgba(252,238,10,0.4)]',
+          magenta: 'border-[#ff0055] text-[#ff0055] shadow-[0_0_16px_rgba(255,0,85,0.4)]'
+        };
+        const toast = document.createElement('div');
+        toast.className = `pointer-events-auto px-4 py-2.5 rounded bg-[#060212]/95 border font-mono text-xs tracking-wider ${colors[type] || colors.cyan}`;
+        toast.textContent = `> ${message}`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateX(16px)';
+          setTimeout(() => toast.remove(), 320);
+        }, 2600);
+      }
+
+      /* =======================================================
+         3. OPTIONAL WEB AUDIO API SYNTH SFX ENGINE (MUTED BY DEFAULT)
+      ======================================================= */
+      let audioCtx = null;
+
+      function playSynthBeep(mode = 'click') {
+        if (!state.sfxEnabled) return;
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          if (!audioCtx) audioCtx = new AudioContextClass();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          const now = audioCtx.currentTime;
+
+          if (mode === 'hover') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(680, now);
+            osc.frequency.exponentialRampToValueAtTime(920, now + 0.045);
+            gain.gain.setValueAtTime(0.025, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.055);
+          } else {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(520, now);
+            osc.frequency.exponentialRampToValueAtTime(1040, now + 0.08);
+            gain.gain.setValueAtTime(0.05, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.095);
+          }
+        } catch {
+          // Audio playback blocked or unsupported
+        }
+      }
+
+      /* =======================================================
+         4. ANIMATED SYNTHWAVE PERSPECTIVE GRID + PARTICLES CANVAS
+      ======================================================= */
+      function initSynthwaveCanvas() {
+        const canvas = document.getElementById('cyber-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        let width = 0;
+        let height = 0;
+        let dpr = 1;
+        let gridOffset = 0;
+        let particles = [];
+
+        function createParticles(count) {
+          const palette = ['#00f3ff', '#ff0055', '#fcee0a', '#9d00ff'];
+          const arr = [];
+          for (let i = 0; i < count; i++) {
+            arr.push({
+              x: Math.random() * width,
+              y: Math.random() * height,
+              vx: (Math.random() - 0.5) * 0.35,
+              vy: -0.15 - Math.random() * 0.45,
+              size: 1 + Math.random() * 2.2,
+              alpha: 0.25 + Math.random() * 0.65,
+              color: palette[Math.floor(Math.random() * palette.length)]
+            });
+          }
+          return arr;
+        }
+
+        function resizeCanvas() {
+          dpr = Math.min(window.devicePixelRatio || 1, 2);
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = Math.floor(width * dpr);
+          canvas.height = Math.floor(height * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          const particleCount = width < 768 ? 32 : 65;
+          particles = createParticles(particleCount);
+        }
+
+        function drawFrame() {
+          // Deep void sky gradient
+          const skyGrad = ctx.createLinearGradient(0, 0, 0, height);
+          skyGrad.addColorStop(0, '#05010f');
+          skyGrad.addColorStop(0.54, '#0d0221');
+          skyGrad.addColorStop(0.64, '#1b0536');
+          skyGrad.addColorStop(1, '#060212');
+          ctx.fillStyle = skyGrad;
+          ctx.fillRect(0, 0, width, height);
+
+          const horizonY = height * 0.62;
+
+          // Subtle Horizon Glow
+          const glowGrad = ctx.createRadialGradient(
+            width * 0.5, horizonY, 10,
+            width * 0.5, horizonY, Math.max(width, height) * 0.45
+          );
+          glowGrad.addColorStop(0, 'rgba(255, 0, 85, 0.22)');
+          glowGrad.addColorStop(0.45, 'rgba(157, 0, 255, 0.12)');
+          glowGrad.addColorStop(1, 'rgba(6, 2, 18, 0)');
+          ctx.fillStyle = glowGrad;
+          ctx.fillRect(0, 0, width, height);
+
+          // Perspective Synthwave Neon Grid (below horizon)
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, horizonY, width, height - horizonY);
+          ctx.clip();
+
+          // Horizon line
+          ctx.strokeStyle = 'rgba(255, 0, 85, 0.65)';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(0, horizonY);
+          ctx.lineTo(width, horizonY);
+          ctx.stroke();
+
+          // Vertical perspective lines radiating from center vanishing point
+          const vanishX = width * 0.5;
+          const numVerticals = width < 640 ? 14 : 24;
+          ctx.strokeStyle = 'rgba(0, 243, 255, 0.18)';
+          ctx.lineWidth = 1;
+
+          for (let i = -numVerticals; i <= numVerticals; i++) {
+            const spreadBottom = vanishX + i * (width / 10);
+            ctx.beginPath();
+            ctx.moveTo(vanishX, horizonY);
+            ctx.lineTo(spreadBottom, height + 20);
+            ctx.stroke();
+          }
+
+          // Animated horizontal depth lines
+          gridOffset = (gridOffset + 0.012) % 1;
+          const numHorizontals = 16;
+          for (let j = 0; j < numHorizontals; j++) {
+            const t = (j + gridOffset) / numHorizontals;
+            const y = horizonY + Math.pow(t, 2.35) * (height - horizonY);
+            const alpha = 0.08 + t * 0.32;
+            ctx.strokeStyle = j % 3 === 0
+              ? `rgba(255, 0, 85, ${alpha.toFixed(2)})`
+              : `rgba(0, 243, 255, ${alpha.toFixed(2)})`;
+            ctx.lineWidth = 0.8 + t * 1.1;
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(width, y);
+            ctx.stroke();
+          }
+          ctx.restore();
+
+          // Drifting Neon Data Particles
+          for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (p.y < -10) {
+              p.y = height + 10;
+              p.x = Math.random() * width;
+            }
+            if (p.x < -10) p.x = width + 10;
+            if (p.x > width + 10) p.x = -10;
+
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = 8;
+            ctx.fillRect(p.x, p.y, p.size, p.size);
+            ctx.restore();
+          }
+
+          window.requestAnimationFrame(drawFrame);
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        drawFrame();
+      }
+
+      /* =======================================================
+         5. TYPEWRITER SUBTITLE & UTC SYSTEM CLOCK
+      ======================================================= */
+      function startTypewriter() {
+        const el = document.getElementById('typewriter-text');
+        if (!el) return;
+        const roles = [
+          'SOFTWARE DEVELOPER',
+          'FULL-STACK & SYSTEM ARCHITECT',
+          'OPEN-SOURCE BUILDER @ CESAR SYSTEMS',
+          'DRUMMER OFF-DUTY 🥁'
+        ];
+        let roleIdx = 0;
+        let charIdx = 0;
+        let deleting = false;
+
+        function tick() {
+          const current = roles[roleIdx];
+          if (!deleting) {
+            charIdx++;
+            el.textContent = current.slice(0, charIdx);
+            if (charIdx === current.length) {
+              deleting = true;
+              setTimeout(tick, 1800);
+              return;
+            }
+            setTimeout(tick, 55);
+          } else {
+            charIdx--;
+            el.textContent = current.slice(0, charIdx);
+            if (charIdx === 0) {
+              deleting = false;
+              roleIdx = (roleIdx + 1) % roles.length;
+              setTimeout(tick, 350);
+              return;
+            }
+            setTimeout(tick, 30);
+          }
+        }
+        tick();
+      }
+
+      function startClock() {
+        const el = document.getElementById('hero-sys-clock');
+        const yearEl = document.getElementById('footer-year');
+        if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+        function update() {
+          if (!el) return;
+          const now = new Date();
+          el.textContent = `SYS_TIME: ${now.toISOString().slice(11, 19)} UTC`;
+        }
+        update();
+        setInterval(update, 1000);
+      }
+
+      /* =======================================================
+         6. LIVE GITHUB API FETCH + FALLBACK SNAPSHOT
+      ======================================================= */
+      function setUplinkUI(mode) {
+        const dots = [document.getElementById('uplink-dot'), document.getElementById('uplink-dot-mobile')];
+        const labels = [document.getElementById('uplink-label'), document.getElementById('uplink-label-mobile')];
+
+        dots.forEach((dot) => {
+          if (!dot) return;
+          dot.className = 'w-2 h-2 rounded-full animate-pulse ' + (
+            mode === 'live'
+              ? 'bg-emerald-400 shadow-[0_0_8px_#34d399]'
+              : mode === 'cached'
+                ? 'bg-amber-400 shadow-[0_0_8px_#fbbf24]'
+                : 'bg-[#00f3ff]'
+          );
+        });
+
+        labels.forEach((label) => {
+          if (!label) return;
+          if (mode === 'live') {
+            label.textContent = '[LIVE UPLINK: GITHUB API]';
+            label.className = 'font-mono text-[11px] tracking-wider text-emerald-300';
+          } else if (mode === 'cached') {
+            label.textContent = '[CACHED SNAPSHOT]';
+            label.className = 'font-mono text-[11px] tracking-wider text-amber-300';
+          } else {
+            label.textContent = 'SYNCING UPLINK...';
+            label.className = 'font-mono text-[11px] tracking-wider text-[#00f3ff]';
+          }
+        });
+      }
+
+      async function fetchGitHubData(isManualSync = false) {
+        setUplinkUI('syncing');
+        try {
+          const [userRes, reposRes] = await Promise.all([
+            fetch(API_USER_URL, { headers: { Accept: 'application/vnd.github+json' } }),
+            fetch(API_REPOS_URL, { headers: { Accept: 'application/vnd.github+json' } })
+          ]);
+
+          if (!userRes.ok || !reposRes.ok) {
+            throw new Error(`GitHub API HTTP ${userRes.status}/${reposRes.status}`);
+          }
+
+          const userData = await userRes.json();
+          const reposData = await reposRes.json();
+
+          if (!Array.isArray(reposData) || reposData.length === 0) {
+            throw new Error('Empty repository list returned');
+          }
+
+          state.user = userData;
+          state.allRepos = reposData;
+          state.uplinkLive = true;
+          setUplinkUI('live');
+
+          if (isManualSync) {
+            showToast('LIVE GITHUB API RE-SYNCED SUCCESSFULLY', 'cyan');
+          }
+        } catch (err) {
+          console.warn('GitHub API uplink unavailable, engaging cached snapshot:', err);
+          state.user = FALLBACK_USER;
+          state.allRepos = FALLBACK_REPOS;
+          state.uplinkLive = false;
+          setUplinkUI('cached');
+
+          if (isManualSync) {
+            showToast('API RATE LIMIT REACHED — USING CACHED SNAPSHOT', 'yellow');
+          }
+        }
+
+        computeStarRanks();
+        renderHeroProfile();
+        renderTelemetry();
+        renderLanguageFilterChips();
+        renderReposGrid();
+      }
+
+      function computeStarRanks() {
+        state.starRankMap.clear();
+        const nonForksSorted = [...state.allRepos]
+          .filter((r) => !r.fork)
+          .sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
+
+        nonForksSorted.forEach((repo, index) => {
+          state.starRankMap.set(repo.id, index + 1);
+        });
+      }
+
+      /* =======================================================
+         7. HERO PROFILE & ANIMATED TELEMETRY RENDERING
+      ======================================================= */
+      function renderHeroProfile() {
+        const user = state.user || FALLBACK_USER;
+        const avatarEl = document.getElementById('hero-avatar');
+        const bioEl = document.getElementById('hero-bio');
+
+        if (avatarEl && user.avatar_url) {
+          avatarEl.src = user.avatar_url;
+        }
+        if (bioEl && user.bio && user.bio.trim().length > 10) {
+          bioEl.textContent = user.bio;
+        }
+      }
+
+      function animateCountUp(el, target) {
+        if (!el) return;
+        const duration = 900;
+        const startTime = performance.now();
+        const startVal = 0;
+
+        function step(now) {
+          const progress = Math.min((now - startTime) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = Math.round(startVal + (target - startVal) * eased);
+          el.textContent = current.toLocaleString('en-US');
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          }
+        }
+        requestAnimationFrame(step);
+      }
+
+      function renderTelemetry() {
+        const user = state.user || FALLBACK_USER;
+        const ownedRepos = state.allRepos.filter((r) => !r.fork);
+        const totalStars = ownedRepos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0);
+        const totalForks = ownedRepos.reduce((sum, r) => sum + (r.forks_count || 0), 0);
+        const publicRepos = user.public_repos ?? state.allRepos.length;
+        const followers = user.followers ?? 0;
+
+        animateCountUp(document.getElementById('metric-stars'), totalStars);
+        animateCountUp(document.getElementById('metric-repos'), publicRepos);
+        animateCountUp(document.getElementById('metric-forks'), totalForks);
+        animateCountUp(document.getElementById('metric-followers'), followers);
+
+        renderLanguageDistribution(ownedRepos);
+      }
+
+      function renderLanguageDistribution(repos) {
+        const barEl = document.getElementById('lang-bar');
+        const legendEl = document.getElementById('lang-legend');
+        const summaryEl = document.getElementById('lang-summary-label');
+        if (!barEl || !legendEl) return;
+
+        const counts = {};
+        let totalWithLang = 0;
+        repos.forEach((r) => {
+          if (r.language) {
+            counts[r.language] = (counts[r.language] || 0) + 1;
+            totalWithLang++;
+          }
+        });
+
+        const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+        if (summaryEl) {
+          summaryEl.textContent = `${sorted.length} LANGUAGES DETECTED ACROSS ${totalWithLang} REPOS`;
+        }
+
+        barEl.innerHTML = '';
+        legendEl.innerHTML = '';
+
+        if (sorted.length === 0) {
+          barEl.innerHTML = '<div class="w-full h-full bg-slate-800"></div>';
+          return;
+        }
+
+        sorted.forEach(([lang, count]) => {
+          const pct = ((count / totalWithLang) * 100).toFixed(1);
+          const color = getLangColor(lang);
+
+          const seg = document.createElement('button');
+          seg.type = 'button';
+          seg.title = `${lang}: ${pct}% (${count} repos) — Click to filter`;
+          seg.style.width = `${pct}%`;
+          seg.style.backgroundColor = color;
+          seg.style.boxShadow = `0 0 10px ${color}`;
+          seg.className = 'h-full hover:brightness-125 transition cursor-pointer border-r border-[#060212]/60 last:border-r-0';
+          seg.addEventListener('click', () => {
+            playSynthBeep('click');
+            selectLanguageFilter(lang, true);
+          });
+          barEl.appendChild(seg);
+
+          const chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#060212]/80 border border-slate-700 hover:border-[#00f3ff] font-mono text-xs text-slate-200 transition cursor-pointer';
+          chip.innerHTML = `
+            <span class="w-2.5 h-2.5 rounded-full inline-block" style="background:${color}; box-shadow:0 0 6px ${color};"></span>
+            <span>${escapeHtml(lang)}</span>
+            <span class="text-slate-400">${pct}%</span>
+          `;
+          chip.addEventListener('click', () => {
+            playSynthBeep('click');
+            selectLanguageFilter(lang, true);
+          });
+          legendEl.appendChild(chip);
+        });
+      }
+
+      /* =======================================================
+         8. REPOSITORIES FILTERING, SORTING & SHOWCASE GRID
+      ======================================================= */
+      function selectLanguageFilter(lang, scrollToRepos = false) {
+        state.selectedLanguage = lang;
+        renderLanguageFilterChips();
+        renderReposGrid();
+        if (scrollToRepos) {
+          const reposSection = document.getElementById('repos');
+          if (reposSection) reposSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+
+      function renderLanguageFilterChips() {
+        const container = document.getElementById('lang-filter-chips');
+        if (!container) return;
+
+        const baseRepos = state.includeForks
+          ? state.allRepos
+          : state.allRepos.filter((r) => !r.fork);
+
+        const langCounts = {};
+        baseRepos.forEach((r) => {
+          if (r.language) {
+            langCounts[r.language] = (langCounts[r.language] || 0) + 1;
+          }
+        });
+
+        const sortedLangs = Object.entries(langCounts)
+          .sort((a, b) => b[1] - a[1])
+          .map(([lang]) => lang);
+
+        if (state.selectedLanguage !== 'ALL' && !sortedLangs.includes(state.selectedLanguage)) {
+          state.selectedLanguage = 'ALL';
+        }
+
+        const chips = ['ALL', ...sortedLangs];
+        container.innerHTML = '';
+
+        chips.forEach((lang) => {
+          const active = state.selectedLanguage === lang;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = active
+            ? 'px-3 py-1 rounded font-mono text-xs bg-[#00f3ff] text-[#060212] font-bold shadow-[0_0_12px_rgba(0,243,255,0.6)] cursor-pointer transition'
+            : 'px-3 py-1 rounded font-mono text-xs bg-[#060212]/80 border border-[#00f3ff]/30 text-slate-300 hover:border-[#00f3ff] hover:text-[#00f3ff] cursor-pointer transition';
+
+          const countLabel = lang === 'ALL' ? baseRepos.length : langCounts[lang];
+          btn.textContent = `${lang} (${countLabel})`;
+          btn.addEventListener('click', () => {
+            playSynthBeep('click');
+            selectLanguageFilter(lang, false);
+          });
+          container.appendChild(btn);
+        });
+      }
+
+      function getFilteredAndSortedRepos() {
+        const query = state.searchQuery.trim().toLowerCase();
+
+        let filtered = state.allRepos.filter((repo) => {
+          if (!state.includeForks && repo.fork) return false;
+          if (state.selectedLanguage !== 'ALL' && repo.language !== state.selectedLanguage) return false;
+
+          if (query) {
+            const nameMatch = (repo.name || '').toLowerCase().includes(query);
+            const descMatch = (repo.description || '').toLowerCase().includes(query);
+            const topicMatch = Array.isArray(repo.topics)
+              && repo.topics.some((t) => String(t).toLowerCase().includes(query));
+            const langMatch = (repo.language || '').toLowerCase().includes(query);
+            if (!nameMatch && !descMatch && !topicMatch && !langMatch) return false;
+          }
+          return true;
+        });
+
+        filtered.sort((a, b) => {
+          if (state.sortBy === 'stars') {
+            const diff = (b.stargazers_count || 0) - (a.stargazers_count || 0);
+            return diff !== 0 ? diff : (b.forks_count || 0) - (a.forks_count || 0);
+          }
+          if (state.sortBy === 'forks') {
+            return (b.forks_count || 0) - (a.forks_count || 0);
+          }
+          if (state.sortBy === 'updated') {
+            return new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime();
+          }
+          if (state.sortBy === 'name') {
+            return (a.name || '').localeCompare(b.name || '');
+          }
+          return 0;
+        });
+
+        return filtered;
+      }
+
+      function renderReposGrid() {
+        const grid = document.getElementById('repos-grid');
+        const emptyEl = document.getElementById('repos-empty');
+        const indicatorEl = document.getElementById('repo-count-indicator');
+        const limitBtn = document.getElementById('limit-toggle-btn');
+        if (!grid) return;
+
+        const matching = getFilteredAndSortedRepos();
+        const visible = state.showAll ? matching : matching.slice(0, 12);
+
+        if (indicatorEl) {
+          indicatorEl.textContent = `DISPLAYING ${visible.length} OF ${matching.length} MODULES`;
+        }
+        if (limitBtn) {
+          limitBtn.textContent = state.showAll ? 'VIEW: SHOW ALL' : 'VIEW: TOP 12';
+        }
+
+        if (visible.length === 0) {
+          grid.innerHTML = '';
+          grid.classList.add('hidden');
+          if (emptyEl) emptyEl.classList.remove('hidden');
+          return;
+        }
+
+        if (emptyEl) emptyEl.classList.add('hidden');
+        grid.classList.remove('hidden');
+
+        grid.innerHTML = visible.map((repo, idx) => {
+          const globalRank = state.starRankMap.get(repo.id);
+          const isTop1 = globalRank === 1 && !repo.fork;
+          const isTop2 = globalRank === 2 && !repo.fork;
+          const isTop3 = globalRank === 3 && !repo.fork;
+
+          const rankCardClass = isTop1 ? 'rank-1' : isTop2 ? 'rank-2' : isTop3 ? 'rank-3' : '';
+
+          let rankBadgeHtml = '';
+          if (isTop1) {
+            rankBadgeHtml = `<span class="px-2 py-0.5 rounded font-mono text-[11px] font-bold bg-[#fcee0a] text-[#060212] shadow-[0_0_12px_rgba(252,238,10,0.7)]">♛ RANK #01</span>`;
+          } else if (isTop2) {
+            rankBadgeHtml = `<span class="px-2 py-0.5 rounded font-mono text-[11px] font-bold bg-[#ff0055] text-white shadow-[0_0_12px_rgba(255,0,85,0.65)]">⚡ RANK #02</span>`;
+          } else if (isTop3) {
+            rankBadgeHtml = `<span class="px-2 py-0.5 rounded font-mono text-[11px] font-bold bg-[#00f3ff] text-[#060212] shadow-[0_0_12px_rgba(0,243,255,0.65)]">◈ RANK #03</span>`;
+          } else if (repo.fork) {
+            rankBadgeHtml = `<span class="px-2 py-0.5 rounded font-mono text-[11px] bg-[#9d00ff]/20 border border-[#9d00ff]/50 text-[#d8b4fe]">⑂ FORK</span>`;
+          } else {
+            const displayRank = String(globalRank || idx + 1).padStart(2, '0');
+            rankBadgeHtml = `<span class="px-2 py-0.5 rounded font-mono text-[11px] bg-[#060212] border border-slate-700 text-slate-400">RANK #${displayRank}</span>`;
+          }
+
+          const lang = repo.language || 'Code';
+          const langColor = getLangColor(repo.language);
+          const desc = repo.description && repo.description.trim()
+            ? escapeHtml(repo.description)
+            : '// No transmission summary provided for this module.';
+
+          const topics = Array.isArray(repo.topics) ? repo.topics : [];
+          const topicsHtml = topics.slice(0, 4).map((t) =>
+            `<span class="px-2 py-0.5 rounded bg-[#00f3ff]/10 border border-[#00f3ff]/25 font-mono text-[10px] text-[#00f3ff]">#${escapeHtml(t)}</span>`
+          ).join('') + (topics.length > 4 ? `<span class="px-2 py-0.5 rounded bg-slate-800 font-mono text-[10px] text-slate-400">+${topics.length - 4}</span>` : '');
+
+          return `
+            <article
+              class="cyber-card ${rankCardClass} p-5 flex flex-col justify-between gap-4 cursor-pointer group"
+              data-repo-id="${repo.id}"
+            >
+              <div class="space-y-3">
+                <!-- Card Top HUD Row -->
+                <div class="flex items-center justify-between gap-2">
+                  ${rankBadgeHtml}
+                  <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[#fcee0a]/15 border border-[#fcee0a]/60 font-orbitron font-bold text-xs text-[#fcee0a] shadow-[0_0_10px_rgba(252,238,10,0.2)]">
+                      ★ ${Number(repo.stargazers_count || 0).toLocaleString('en-US')}
+                    </span>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#ff0055]/10 border border-[#ff0055]/40 font-mono text-xs text-[#ff6b9d]">
+                      ⑂ ${Number(repo.forks_count || 0).toLocaleString('en-US')}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Repo Title -->
+                <h3 class="font-orbitron font-bold text-lg text-white group-hover:text-[#00f3ff] transition break-words">
+                  ${escapeHtml(repo.name)}
+                </h3>
+
+                <!-- Description -->
+                <p class="text-slate-300 text-sm leading-relaxed line-clamp-3">
+                  ${desc}
+                </p>
+
+                <!-- Topics -->
+                ${topicsHtml ? `<div class="flex flex-wrap gap-1.5 pt-1">${topicsHtml}</div>` : ''}
+              </div>
+
+              <!-- Card Footer -->
+              <div class="space-y-3 pt-3 border-t border-[#00f3ff]/15">
+                <div class="flex items-center justify-between font-mono text-xs text-slate-400">
+                  <span class="inline-flex items-center gap-1.5 text-slate-200">
+                    <span class="w-2.5 h-2.5 rounded-full inline-block" style="background:${langColor}; box-shadow:0 0 6px ${langColor};"></span>
+                    ${escapeHtml(lang)}
+                  </span>
+                  <span>Updated ${formatRelativeDate(repo.updated_at)}</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    class="inspect-repo-btn cyber-btn py-2 px-3 bg-[#00f3ff]/15 hover:bg-[#00f3ff] border border-[#00f3ff]/60 text-[#00f3ff] hover:text-[#060212] font-mono text-xs font-bold tracking-wider transition cursor-pointer"
+                    data-repo-id="${repo.id}"
+                  >
+                    INSPECT HUD
+                  </button>
+                  <a
+                    href="${escapeHtml(repo.html_url)}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="open-repo-link cyber-btn py-2 px-3 bg-[#ff0055]/15 hover:bg-[#ff0055] border border-[#ff0055]/60 text-white font-mono text-xs font-bold tracking-wider text-center transition"
+                  >
+                    OPEN REPO ↗
+                  </a>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('');
+
+        // Bind card clicks to open Inspector Modal
+        grid.querySelectorAll('article[data-repo-id]').forEach((card) => {
+          card.addEventListener('click', (e) => {
+            if (e.target.closest('a.open-repo-link')) return;
+            const repoId = Number(card.getAttribute('data-repo-id'));
+            const repo = state.allRepos.find((r) => r.id === repoId);
+            if (repo) {
+              playSynthBeep('click');
+              openRepoModal(repo);
+            }
+          });
+        });
+      }
+
+      /* =======================================================
+         9. INTERACTIVE REPO INSPECTOR MODAL
+      ======================================================= */
+      let activeModalRepo = null;
+
+      function openRepoModal(repo) {
+        activeModalRepo = repo;
+        const modal = document.getElementById('repo-modal');
+        if (!modal) return;
+
+        const globalRank = state.starRankMap.get(repo.id);
+        const rankBadge = document.getElementById('modal-rank-badge');
+        const langBadge = document.getElementById('modal-lang-badge');
+        const forkBadge = document.getElementById('modal-fork-badge');
+
+        if (rankBadge) {
+          rankBadge.textContent = globalRank ? `RANK #${String(globalRank).padStart(2, '0')}` : 'MODULE';
+        }
+        if (langBadge) {
+          langBadge.textContent = repo.language || 'MULTI / CODE';
+        }
+        if (forkBadge) {
+          forkBadge.classList.toggle('hidden', !repo.fork);
+        }
+
+        document.getElementById('modal-repo-title').textContent = repo.name || 'Unnamed Module';
+        document.getElementById('modal-repo-fullname').textContent = repo.full_name || `${GITHUB_USERNAME}/${repo.name}`;
+        document.getElementById('modal-repo-desc').textContent =
+          repo.description && repo.description.trim()
+            ? repo.description
+            : '// No transmission description available for this repository.';
+
+        document.getElementById('modal-stars').textContent = Number(repo.stargazers_count || 0).toLocaleString('en-US');
+        document.getElementById('modal-forks').textContent = Number(repo.forks_count || 0).toLocaleString('en-US');
+        document.getElementById('modal-watchers').textContent = Number(repo.watchers_count || repo.stargazers_count || 0).toLocaleString('en-US');
+        document.getElementById('modal-issues').textContent = Number(repo.open_issues_count || 0).toLocaleString('en-US');
+        document.getElementById('modal-license').textContent = (repo.license && (repo.license.spdx_id || repo.license.name)) || 'Unspecified';
+        document.getElementById('modal-branch').textContent = repo.default_branch || 'main';
+        document.getElementById('modal-created').textContent = formatDateShort(repo.created_at);
+        document.getElementById('modal-updated').textContent = `${formatDateShort(repo.updated_at)} (${formatRelativeDate(repo.updated_at)})`;
+
+        // Topics
+        const topicsWrap = document.getElementById('modal-topics-wrap');
+        const topicsEl = document.getElementById('modal-topics');
+        const topics = Array.isArray(repo.topics) ? repo.topics : [];
+        if (topics.length > 0) {
+          topicsWrap.classList.remove('hidden');
+          topicsEl.innerHTML = topics.map((t) =>
+            `<span class="px-2.5 py-1 rounded bg-[#00f3ff]/10 border border-[#00f3ff]/35 font-mono text-xs text-[#00f3ff]">#${escapeHtml(t)}</span>`
+          ).join('');
+        } else {
+          topicsWrap.classList.add('hidden');
+          topicsEl.innerHTML = '';
+        }
+
+        // Clone URL
+        const cloneUrl = repo.clone_url || `https://github.com/${GITHUB_USERNAME}/${repo.name}.git`;
+        document.getElementById('modal-clone-cmd').textContent = `git clone ${cloneUrl}`;
+
+        // Links
+        const ghLink = document.getElementById('modal-github-link');
+        ghLink.href = repo.html_url || `https://github.com/${GITHUB_USERNAME}`;
+
+        const homeLink = document.getElementById('modal-homepage-link');
+        const safeHome = sanitizeUrl(repo.homepage);
+        if (safeHome) {
+          homeLink.href = safeHome;
+          homeLink.classList.remove('hidden');
+        } else {
+          homeLink.classList.add('hidden');
+        }
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeRepoModal() {
+        const modal = document.getElementById('repo-modal');
+        if (!modal) return;
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+        activeModalRepo = null;
+      }
+
+      /* =======================================================
+         10. INTERACTIVE RETRO TERMINAL (> CESAR_OS TERMINAL)
+      ======================================================= */
+      function appendTerminalLine(html, className = 'text-slate-200') {
+        const out = document.getElementById('terminal-output');
+        if (!out) return;
+        const div = document.createElement('div');
+        div.className = className;
+        div.innerHTML = html;
+        out.appendChild(div);
+        out.scrollTop = out.scrollHeight;
+      }
+
+      function executeTerminalCommand(rawCmd) {
+        const cmd = rawCmd.trim().toLowerCase();
+        if (!cmd) return;
+
+        state.cmdHistory.unshift(rawCmd.trim());
+        state.cmdHistoryIdx = -1;
+
+        appendTerminalLine(
+          `<span class="text-[#ff0055]">guest@cesar-os:~$</span> <span class="text-white">${escapeHtml(rawCmd.trim())}</span>`
+        );
+
+        switch (cmd) {
+          case 'help':
+            appendTerminalLine(
+              `<div class="pl-2 space-y-1 text-slate-300">
+                <div><span class="text-[#fcee0a]">whoami</span>  — Developer profile &amp; brand info</div>
+                <div><span class="text-[#fcee0a]">top</span>     — List top 5 most starred GitHub repositories</div>
+                <div><span class="text-[#fcee0a]">stats</span>   — Live GitHub telemetry counters &amp; uplink mode</div>
+                <div><span class="text-[#fcee0a]">stack</span>   — Display Cyberware tech stack loadout</div>
+                <div><span class="text-[#fcee0a]">links</span>   — Print direct neural links (Website, YouTube, Blogs, Support)</div>
+                <div><span class="text-[#fcee0a]">crt</span>     — Toggle CRT scanline overlay ON/OFF</div>
+                <div><span class="text-[#fcee0a]">sfx</span>     — Toggle Web Audio synth SFX ON/OFF</div>
+                <div><span class="text-[#fcee0a]">glitch</span>  — Trigger neural glitch burst across HUD</div>
+                <div><span class="text-[#fcee0a]">clear</span>   — Clear terminal output buffer</div>
+              </div>`
+            );
+            break;
+
+          case 'whoami':
+            appendTerminalLine(
+              `<div class="pl-2 text-[#00f3ff] space-y-0.5">
+                <div>NAME    :: Julio Cesar Leyva Rodriguez</div>
+                <div>HANDLE  :: @julio101290</div>
+                <div>BRAND   :: Cesar Systems (https://cesarsystems.com.mx/)</div>
+                <div>ROLE    :: Software Developer &amp; Full-Stack System Architect</div>
+                <div>OFFDUTY :: Drum covers @ orionDracoDrums 🥁</div>
+              </div>`
+            );
+            break;
+
+          case 'top': {
+            const top5 = [...state.allRepos]
+              .filter((r) => !r.fork)
+              .sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0))
+              .slice(0, 5);
+
+            const rows = top5.map((r, i) =>
+              `<div><span class="text-[#fcee0a]">#0${i + 1}</span> <a href="${escapeHtml(r.html_url)}" target="_blank" rel="noopener noreferrer" class="text-[#00f3ff] underline hover:text-[#ff0055]">${escapeHtml(r.name)}</a> — <span class="text-[#fcee0a]">★ ${r.stargazers_count || 0}</span> <span class="text-slate-400">[${escapeHtml(r.language || 'Code')}]</span></div>`
+            ).join('');
+            appendTerminalLine(`<div class="pl-2 space-y-1">${rows}</div>`);
+            break;
+          }
+
+          case 'stats': {
+            const owned = state.allRepos.filter((r) => !r.fork);
+            const stars = owned.reduce((s, r) => s + (r.stargazers_count || 0), 0);
+            const forks = owned.reduce((s, r) => s + (r.forks_count || 0), 0);
+            const user = state.user || FALLBACK_USER;
+            appendTerminalLine(
+              `<div class="pl-2 text-emerald-300 space-y-0.5">
+                <div>UPLINK       :: ${state.uplinkLive ? 'LIVE GITHUB API' : 'CACHED SNAPSHOT'}</div>
+                <div>TOTAL STARS  :: ★ ${stars}</div>
+                <div>PUBLIC REPOS :: ${user.public_repos ?? state.allRepos.length}</div>
+                <div>TOTAL FORKS  :: ⑂ ${forks}</div>
+                <div>FOLLOWERS    :: ${user.followers ?? 0}</div>
+              </div>`
+            );
+            break;
+          }
+
+          case 'stack':
+            appendTerminalLine(
+              `<div class="pl-2 text-slate-200 space-y-1">
+                <div><span class="text-[#00f3ff]">BACKEND  ::</span> PHP, CodeIgniter, Laravel, C#, .NET, Python</div>
+                <div><span class="text-[#ff0055]">FRONTEND ::</span> HTML5, CSS3, Bootstrap, Chart.js, Electron</div>
+                <div><span class="text-[#fcee0a]">DATABASE ::</span> MySQL, MariaDB, SQL Server, PostgreSQL, SQLite</div>
+                <div><span class="text-[#d8b4fe]">OPS/TOOL ::</span> Linux, AWS, Git, Postman</div>
+              </div>`
+            );
+            break;
+
+          case 'links':
+            appendTerminalLine(
+              `<div class="pl-2 space-y-1 text-xs">
+                <div>WEB      :: <a href="https://cesarsystems.com.mx/" target="_blank" rel="noopener noreferrer" class="text-[#00f3ff] underline">cesarsystems.com.mx</a></div>
+                <div>GITHUB   :: <a href="https://github.com/julio101290" target="_blank" rel="noopener noreferrer" class="text-[#00f3ff] underline">github.com/julio101290</a></div>
+                <div>TELEGRAM :: <a href="https://t.me/CesarSystems" target="_blank" rel="noopener noreferrer" class="text-[#00f3ff] underline">t.me/CesarSystems</a></div>
+                <div>YOUTUBE  :: <a href="https://www.youtube.com/@CesarSystem" target="_blank" rel="noopener noreferrer" class="text-[#ff0055] underline">@CesarSystem</a> | <a href="https://www.youtube.com/@orionDracodrums" target="_blank" rel="noopener noreferrer" class="text-[#fcee0a] underline">@orionDracoDrums</a> | <a href="https://www.youtube.com/@rasec555" target="_blank" rel="noopener noreferrer" class="text-[#00f3ff] underline">@rasec555</a></div>
+                <div>SUPPORT  :: <a href="https://www.buymeacoffee.com/julio101290" target="_blank" rel="noopener noreferrer" class="text-[#fcee0a] underline">BuyMeACoffee</a> | <a href="https://www.patreon.com/c/u74078772" target="_blank" rel="noopener noreferrer" class="text-[#ff0055] underline">Patreon</a></div>
+              </div>`
+            );
+            break;
+
+          case 'crt':
+            toggleCRT();
+            appendTerminalLine(`CRT scanline overlay set to: <span class="text-[#fcee0a]">${state.crtEnabled ? 'ON' : 'OFF'}</span>`, 'text-[#00f3ff]');
+            break;
+
+          case 'sfx':
+            toggleSFX();
+            appendTerminalLine(`Synth Audio SFX set to: <span class="text-[#fcee0a]">${state.sfxEnabled ? 'ON' : 'OFF'}</span>`, 'text-[#00f3ff]');
+            break;
+
+          case 'glitch':
+            triggerGlitchBurst();
+            appendTerminalLine('⚠ NEURAL SIGNAL DISTORTION INJECTED // RESTORING STABILITY...', 'text-[#ff0055]');
+            break;
+
+          case 'clear': {
+            const out = document.getElementById('terminal-output');
+            if (out) out.innerHTML = '';
+            appendTerminalLine('Buffer purged. Type <span class="text-[#fcee0a]">help</span> for available commands.', 'text-slate-400');
+            break;
+          }
+
+          default:
+            appendTerminalLine(
+              `Command not recognized: <span class="text-[#ff0055]">${escapeHtml(cmd)}</span>. Type <span class="text-[#fcee0a]">help</span> to list valid commands.`,
+              'text-slate-400'
+            );
+        }
+      }
+
+      /* =======================================================
+         11. HUD TOGGLES (CRT, SFX, GLITCH) & EVENT LISTENERS
+      ======================================================= */
+      function toggleCRT() {
+        state.crtEnabled = !state.crtEnabled;
+        document.body.classList.toggle('crt-off', !state.crtEnabled);
+        const btn = document.getElementById('crt-toggle');
+        if (btn) {
+          btn.textContent = state.crtEnabled ? 'CRT: ON' : 'CRT: OFF';
+          btn.setAttribute('aria-pressed', String(state.crtEnabled));
+          btn.className = state.crtEnabled
+            ? 'px-2.5 py-1.5 rounded font-mono text-xs border border-[#00f3ff]/50 bg-[#00f3ff]/10 text-[#00f3ff] hover:bg-[#00f3ff]/20 transition cursor-pointer'
+            : 'px-2.5 py-1.5 rounded font-mono text-xs border border-slate-600 bg-slate-900/70 text-slate-400 hover:border-[#00f3ff] transition cursor-pointer';
+        }
+      }
+
+      function toggleSFX() {
+        state.sfxEnabled = !state.sfxEnabled;
+        const btn = document.getElementById('sfx-toggle');
+        if (btn) {
+          btn.textContent = state.sfxEnabled ? 'SFX: ON' : 'SFX: OFF';
+          btn.setAttribute('aria-pressed', String(state.sfxEnabled));
+          btn.className = state.sfxEnabled
+            ? 'px-2.5 py-1.5 rounded font-mono text-xs border border-[#ff0055] bg-[#ff0055]/20 text-[#ff0055] hover:bg-[#ff0055]/30 transition cursor-pointer'
+            : 'px-2.5 py-1.5 rounded font-mono text-xs border border-slate-600 bg-slate-900/70 text-slate-400 hover:border-[#ff0055] hover:text-[#ff0055] transition cursor-pointer';
+        }
+        if (state.sfxEnabled) {
+          playSynthBeep('click');
+          showToast('SYNTH AUDIO SFX ENABLED', 'magenta');
+        }
+      }
+
+      function triggerGlitchBurst() {
+        document.body.classList.remove('glitch-burst');
+        void document.body.offsetWidth; // Force reflow
+        document.body.classList.add('glitch-burst');
+        playSynthBeep('click');
+        setTimeout(() => document.body.classList.remove('glitch-burst'), 1000);
+      }
+
+      function bindEvents() {
+        // Navbar controls
+        document.getElementById('crt-toggle')?.addEventListener('click', () => {
+          playSynthBeep('click');
+          toggleCRT();
+        });
+        document.getElementById('sfx-toggle')?.addEventListener('click', toggleSFX);
+
+        document.getElementById('resync-btn')?.addEventListener('click', () => {
+          playSynthBeep('click');
+          fetchGitHubData(true);
+        });
+        document.getElementById('resync-btn-mobile')?.addEventListener('click', () => {
+          playSynthBeep('click');
+          fetchGitHubData(true);
+        });
+
+        // Mobile drawer
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileBtn?.addEventListener('click', () => {
+          playSynthBeep('click');
+          mobileMenu?.classList.toggle('hidden');
+        });
+        document.querySelectorAll('.mobile-nav-link').forEach((link) => {
+          link.addEventListener('click', () => mobileMenu?.classList.add('hidden'));
+        });
+
+        // Repo Control Deck
+        const searchInput = document.getElementById('repo-search');
+        const clearSearchBtn = document.getElementById('clear-search-btn');
+        searchInput?.addEventListener('input', (e) => {
+          state.searchQuery = e.target.value;
+          clearSearchBtn?.classList.toggle('hidden', !state.searchQuery);
+          renderReposGrid();
+        });
+        clearSearchBtn?.addEventListener('click', () => {
+          state.searchQuery = '';
+          if (searchInput) searchInput.value = '';
+          clearSearchBtn.classList.add('hidden');
+          renderReposGrid();
+        });
+
+        document.getElementById('repo-sort')?.addEventListener('change', (e) => {
+          playSynthBeep('click');
+          state.sortBy = e.target.value;
+          renderReposGrid();
+        });
+
+        document.getElementById('include-forks-toggle')?.addEventListener('change', (e) => {
+          playSynthBeep('click');
+          state.includeForks = e.target.checked;
+          renderLanguageFilterChips();
+          renderReposGrid();
+        });
+
+        document.getElementById('limit-toggle-btn')?.addEventListener('click', () => {
+          playSynthBeep('click');
+          state.showAll = !state.showAll;
+          renderReposGrid();
+        });
+
+        document.getElementById('reset-filters-btn')?.addEventListener('click', () => {
+          playSynthBeep('click');
+          state.searchQuery = '';
+          state.selectedLanguage = 'ALL';
+          state.sortBy = 'stars';
+          state.includeForks = false;
+          if (searchInput) searchInput.value = '';
+          clearSearchBtn?.classList.add('hidden');
+          const sortEl = document.getElementById('repo-sort');
+          if (sortEl) sortEl.value = 'stars';
+          const forkEl = document.getElementById('include-forks-toggle');
+          if (forkEl) forkEl.checked = false;
+          renderLanguageFilterChips();
+          renderReposGrid();
+        });
+
+        // Modal controls
+        document.getElementById('modal-close-btn')?.addEventListener('click', () => {
+          playSynthBeep('click');
+          closeRepoModal();
+        });
+        document.getElementById('repo-modal')?.addEventListener('click', (e) => {
+          if (e.target.id === 'repo-modal') closeRepoModal();
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && activeModalRepo) closeRepoModal();
+        });
+
+        // One-click git clone copy
+        document.getElementById('modal-copy-btn')?.addEventListener('click', () => {
+          const cmdText = document.getElementById('modal-clone-cmd')?.textContent || '';
+          const ok = copyTextToClipboard(cmdText);
+          playSynthBeep('click');
+          showToast(ok ? 'CLONE COMMAND COPIED TO CLIPBOARD' : 'COPY FAILED — SELECT MANUALLY', ok ? 'cyan' : 'magenta');
+        });
+
+        // Terminal form & quick chips
+        const termForm = document.getElementById('terminal-form');
+        const termInput = document.getElementById('terminal-input');
+        termForm?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          if (!termInput) return;
+          const val = termInput.value;
+          termInput.value = '';
+          playSynthBeep('click');
+          executeTerminalCommand(val);
+        });
+
+        termInput?.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowUp' && state.cmdHistory.length > 0) {
+            e.preventDefault();
+            state.cmdHistoryIdx = Math.min(state.cmdHistoryIdx + 1, state.cmdHistory.length - 1);
+            termInput.value = state.cmdHistory[state.cmdHistoryIdx];
+          } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            state.cmdHistoryIdx = Math.max(state.cmdHistoryIdx - 1, -1);
+            termInput.value = state.cmdHistoryIdx === -1 ? '' : state.cmdHistory[state.cmdHistoryIdx];
+          }
+        });
+
+        document.querySelectorAll('.term-chip').forEach((chip) => {
+          chip.addEventListener('click', () => {
+            const cmd = chip.getAttribute('data-cmd');
+            if (cmd) {
+              playSynthBeep('click');
+              executeTerminalCommand(cmd);
+            }
+          });
+        });
+
+        // Subtle hover/click SFX binding for annotated controls
+        document.querySelectorAll('[data-sfx="hover"]').forEach((el) => {
+          el.addEventListener('mouseenter', () => playSynthBeep('hover'));
+        });
+        document.querySelectorAll('[data-sfx="click"]').forEach((el) => {
+          el.addEventListener('click', () => playSynthBeep('click'));
+        });
+      }
+
+      /* =======================================================
+         12. INITIALIZATION ON WINDOW LOAD
+      ======================================================= */
+      window.addEventListener('load', () => {
+        initSynthwaveCanvas();
+        startTypewriter();
+        startClock();
+        bindEvents();
+        fetchGitHubData(false);
+      });
+    })();
+  </script>
+</body>
+</html>
